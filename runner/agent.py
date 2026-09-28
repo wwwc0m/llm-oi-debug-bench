@@ -196,11 +196,20 @@ class AgentRunner:
         submits, usage_total = 0, {"prompt_tokens": 0, "completion_tokens": 0}
         final = {"status": "no_submit", "rounds_used": 0}
 
+        # 可选注入请求参数（如 {"reasoning_effort":"low"}）——对照组实验用
+        import os as _os
+        req_extra = None
+        if _os.environ.get("BENCH_REQUEST_EXTRA"):
+            try:
+                req_extra = json.loads(_os.environ["BENCH_REQUEST_EXTRA"])
+            except Exception:
+                req_extra = None
+
         for step in range(60):  # 硬上限：防止死循环
             print(f"[agent] 第 {step + 1} 步：请求模型 {self.model} ...", flush=True)
             try:
                 resp = _stream_create(self.client, self.model,
-                                      messages, _tools_schema())
+                                      messages, _tools_schema(), req_extra)
             except Exception as e:
                 print(f"[agent] API 调用失败：{str(e)[:150]}", flush=True)
                 final = {"status": "error", "detail": str(e)[:200],
