@@ -112,6 +112,7 @@ class AgentRunner:
         final = {"status": "no_submit", "rounds_used": 0}
 
         for step in range(60):  # 硬上限：防止死循环
+            print(f"[agent] 第 {step + 1} 步：请求模型 {self.model} ...", flush=True)
             resp = self.client.chat.completions.create(
                 model=self.model, messages=messages,
                 tools=_tools_schema(), temperature=0.7,
@@ -149,6 +150,10 @@ class AgentRunner:
                                               None)
                     else:
                         result = {"ok": False, "errors": f"未知工具 {name}"}
+                    brief = result.get("detail") or (
+                        "退回：" + result.get("local_gate", "?") if result.get("local_gate")
+                        else ("失败：" + str(result.get("errors", ""))[:120] if not result.get("ok") else "ok"))
+                    print(f"[agent] 工具 {name} -> {brief}", flush=True)
                     messages.append({"role": "tool", "tool_call_id": tc.id,
                                      "content": json.dumps(result, ensure_ascii=False)[:6000]})
                     if name == "submit" and result.get("all_ac"):

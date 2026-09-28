@@ -85,6 +85,7 @@ class LuoguJudge:
 
     def submit(self, code: str) -> dict:
         # —— 本地预检门：编译（未过即退回，不计入提交次数）——
+        print("[judge] 本地预检：编译 + 题面样例 ...", flush=True)
         exe, err = self._get_exe(code)
         if exe is None:
             return {"ok": False, "local_gate": "compile",
@@ -104,6 +105,7 @@ class LuoguJudge:
                             "注意：正式评测的隐藏测试点比样例更严。"}
 
         # —— 预检通过，正式提交洛谷 ——
+        print("[judge] 预检通过，正在通过浏览器提交洛谷 ...", flush=True)
         t0 = time.time()
         try:
             rid = self.browser.submit(code, self.lang, self.p.source)

@@ -31,68 +31,51 @@ class LuoguBrowser:
                 {"name": "_uid", "value": uid, "domain": ".luogu.com.cn", "path": "/"},
                 {"name": "__client_id", "value": cid, "domain": ".luogu.com.cn", "path": "/"},
             ])
+        try:
+            self.ctx.grant_permissions(["clipboard-read", "clipboard-write"],
+                                       origin="https://www.luogu.com.cn")
+        except Exception:
+            pass
         self.page = self.ctx.new_page()
 
     # ---------- 提交 ----------
 
-    def submit(self, code: str, lang: str, ref: dict, human_wait_s: int = 120) -> str:
-        pid = ref["pid"]
+    def submit(self, code: str, lang: str, ref: dict, human_wait_s: int = 180) -> str:
+        """对话式提交（实测流程）：题目页点"提交答案"→ CM6 编辑器剪贴板填充 →
+        自动点"提交评测"→ 若出人机验证等人工完成 → 捕获 /record/{rid} 跳转。"""
         page = self.page
-        page.goto(f"{BASE}/problem/{pid}", wait_until="domcontentloaded", timeout=30000)
+        page.goto(f"{BASE}/problem/{ref['pid']}", wait_until="domcontentloaded",
+                  timeout=30000)
+        page.wait_for_timeout(3000)
+        # 打开提交对话框（工具栏菜单里的"提交答案"入口）
+        page.get_by_text("提交答案", exact=True).first.click(timeout=10000)
         page.wait_for_timeout(2500)
+        # 填充代码：剪贴板 + Ctrl+A / Ctrl+V（CodeMirror 6）
+        page.evaluate("c => navigator.clipboard.writeText(c)", code)
+        page.locator(".cm-content").first.click(timeout=10000)
+        page.keyboard.press("Control+a")
+        page.keyboard.press("Control+v")
+        page.wait_for_timeout(1000)
+        n = page.evaluate(
+            "() => (document.querySelector('.cm-content')||{textContent:''}).textContent.length")
+        print(f"[浏览器] 代码已填入编辑器（{n} 字符），语言默认 C++14 (GCC 9)；"
+              f"正在点击提交，如弹出人机验证请手动完成…", flush=True)
+        page.get_by_text("提交评测", exact=True).first.click(timeout=10000)
 
-        # 策略1：页面内 fetch（同源，自动带全部头与 Cookie）
-        probe = page.evaluate(
-            "async ([pid, code, lang]) => {"
-            "  const meta = document.querySelector('meta[name=\\\"csrf-token\\\"]');"
-            "  const csrf = meta ? meta.content : '';"
-            "  const body = new URLSearchParams({code, lang, enableO2: '1'});"
-            "  const r = await fetch(`/fe/api/problem/submit/${pid}`, {"
-            "    method: 'POST', headers: {'content-type': 'application/x-www-form-urlencoded',"
-            "      'x-csrf-token': csrf, 'x-luogu-type': 'content-only'}, body});"
-            "  const t = await r.text(); let j = null;"
-            "  try { j = JSON.parse(t); } catch (e) {}"
-            "  return {status: r.status, json: j, head: t.slice(0, 150)};"
-            "}", [pid, code, lang or "28"])
-        j = probe.get("json") or {}
-        rid = j.get("rid") or (j.get("data") or {}).get("rid")
-        if rid:
-            return str(rid)
-        if "Captcha" in (j.get("errorType") or ""):
-            print("[浏览器] 接口要求验证码 → 转人工模式：请在弹出的浏览器里完成提交")
-            return self._human_submit(code, ref, human_wait_s)
-        raise RuntimeError(f"提交失败：HTTP {probe.get('status')} {probe.get('head')}")
-
-    def _human_submit(self, code: str, ref: dict, wait_s: int) -> str:
-        """打开提交界面，把代码放入编辑器，等待人工点击提交后捕获 rid。"""
-        page = self.page
-        try:
-            page.get_by_text("提交", exact=True).first.click(timeout=5000)
-        except Exception:
-            page.goto(f"{BASE}/problem/{ref['pid']}", wait_until="domcontentloaded")
-            page.wait_for_timeout(2000)
-            page.get_by_text("提交", exact=True).first.click(timeout=5000)
-        page.wait_for_timeout(1500)
-        # 尝试把代码写进编辑器（codemirror 或 textarea）
-        page.evaluate(
-            "code => {"
-            "  const ta = document.querySelector('textarea');"
-            "  const cm = document.querySelector('.CodeMirror');"
-            "  if (cm && cm.CodeMirror) { cm.CodeMirror.setValue(code); return 'cm'; }"
-            "  if (ta) { const s = Object.getOwnPropertyDescriptor("
-            "    window.HTMLTextAreaElement.prototype, 'value').set;"
-            "    s.call(ta, code); ta.dispatchEvent(new Event('input', {bubbles: true}));"
-            "    return 'ta'; }"
-            "  return 'none';"
-            "}", code)
-        print(f"[浏览器] 代码已填入，等待人工提交（{wait_s}s 内）…")
-        deadline = time.time() + wait_s
+        deadline = time.time() + human_wait_s
+        warned = False
         while time.time() < deadline:
+            page.wait_for_timeout(2000)
             m = _RECORD_RE.search(page.url)
             if m:
                 return m.group(1)
-            page.wait_for_timeout(2000)
-        raise TimeoutError("等待人工提交超时")
+            if not warned:
+                body = page.inner_text("body")[:3000]
+                if "验证" in body or "人机" in body:
+                    print("[浏览器] 需要人机验证：请在浏览器窗口完成，提交会自动继续…",
+                          flush=True)
+                    warned = True
+        raise TimeoutError(f"等待提交跳转超时（{human_wait_s}s）；当前 URL: {page.url}")
 
     # ---------- 结果 ----------
 
