@@ -24,6 +24,7 @@
 | 题目 | 模型 | 轮次 | 结局 | 提交 | tokens(p/c) | 时间 |
 |------|------|------|------|------|-------------|------|
 <!-- AUTO:RUNS -->
+| P5643 | deepseek:deepseek-flash | run1 | fixed | 1/5 | 10192/9106 | 2026-09-28 21:51 |
 | P5649 | deepseek:deepseek-flash | run1 | gave_up | 3/5 | 0/10三连后弃（LCT实现完全错，2次额度未用），B类第6例 | 2026-09-28 21:3x |
 | P5649 | deepseek:deepseek-flash | run1 | gave_up | 3/5 | 1704726/173888 | 2026-09-28 21:41 |
 | P5644 | deepseek:deepseek-flash | run1 | fixed | 1/5 | 12574/14484 | 2026-09-28 21:26 |
