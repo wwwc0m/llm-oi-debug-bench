@@ -1,0 +1,15 @@
+{
+  "problem": "P5612",
+  "model": "deepseek:deepseek-flash",
+  "phase": "A",
+  "run": 1,
+  "final": {
+    "status": "exhausted",
+    "rounds_used": 5
+  },
+  "usage": {
+    "prompt_tokens": 611082,
+    "completion_tokens": 87240
+  },
+  "submits": 5
+}

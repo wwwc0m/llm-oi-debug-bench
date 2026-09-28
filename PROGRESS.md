@@ -24,6 +24,9 @@
 | 题目 | 模型 | 轮次 | 结局 | 提交 | tokens(p/c) | 时间 |
 |------|------|------|------|------|-------------|------|
 <!-- AUTO:RUNS -->
+| P5612 | deepseek:deepseek-flash | run1 | exhausted | 5/5 | 6→7→9→11→11/20 爬升后平台，深伤典型 | 2026-09-28 22:0x |
+| P5612 | deepseek:deepseek-flash | run1 | exhausted | 5/5 | 611082/87240 | 2026-09-28 20:54 |
+| P17206 | deepseek:deepseek-flash | run1 | fixed | 1/5 | 8122/6958 | 2026-09-28 20:52 |
 | P16531 | deepseek:deepseek-flash | run2 | no_submit(过度验证) | 0/5 | 60轮本地自测全过却从不提交，3.13M tokens 磨到步数上限 | 2026-09-28 21:5x |
 | P16531 | deepseek:deepseek-flash | run2 | no_submit | 0/5 | 3133187/235176 | 2026-09-28 20:49 |
 | P17387 | deepseek:deepseek-flash | run1 | fixed | 1/5 | 107016/67435 | 2026-09-28 20:44 |
