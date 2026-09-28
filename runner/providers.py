@@ -14,7 +14,6 @@ PROVIDERS = {
 
 # 实验默认被试（BENCH_MODELS 可覆盖）；GLM 系因思考不可控暂停参与，注册保留
 DEFAULT_MODELS = [
-    "deepseek:deepseek-v4-pro",
     "deepseek:deepseek-flash",
 ]
 
