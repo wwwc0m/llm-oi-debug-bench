@@ -23,6 +23,35 @@ BAD_COMPILE = """#include <bits/stdc++.h>
 int main() { this is not valid c++ ; }
 """
 
+# 参考解与 boundary 变体（原 P1908 逆序对，改为内置，避免依赖题库内容）
+GOOD_CODE = """#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+int n;
+vector<int> a, tmp;
+ll count_inv(int l, int r) {
+    if (r - l <= 1) return 0;
+    int m = (l + r) / 2;
+    ll res = count_inv(l, m) + count_inv(m, r);
+    int i = l, j = m, k = l;
+    while (i < m || j < r) {
+        if (j >= r || (i < m && a[i] <= a[j])) tmp[k++] = a[i++];
+        else { res += m - i; tmp[k++] = a[j++]; }
+    }
+    for (int t = l; t < r; t++) a[t] = tmp[t];
+    return res;
+}
+int main() {
+    scanf("%d", &n);
+    a.resize(n); tmp.resize(n);
+    for (auto &x : a) scanf("%d", &x);
+    printf("%lld\\n", count_inv(0, n));
+    return 0;
+}
+"""
+
+BOUNDARY_CODE = GOOD_CODE.replace("a[i] <= a[j]", "a[i] < a[j]")
+
 
 class MockFetcher(PlatformBackend):
     name = "mock"
@@ -102,11 +131,7 @@ def main():
     assert os.path.exists(os.path.join(tmp, "platform_cache.json"))
     assert os.path.exists(os.path.join(tmp, "statement.md"))
 
-    prob = os.path.join(root, "experiments", "P1908", "assets")
-    with open(os.path.join(prob, "solution.cpp"), encoding="utf-8") as f:
-        good = f.read()
-    with open(os.path.join(prob, "mutants", "boundary.cpp"), encoding="utf-8") as f:
-        boundary = f.read()
+    good, boundary = GOOD_CODE, BOUNDARY_CODE
 
     # 场景：①语法错误→编译门退回 ②boundary→样例门退回 ③正解→过门提交 AC
     client, calls = _make_llm_client([BAD_COMPILE, boundary, good])
