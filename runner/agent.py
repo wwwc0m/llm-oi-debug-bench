@@ -295,6 +295,9 @@ class AgentRunner:
                                      "content": "你上一次响应为空（思考可能超出输出上限）。"
                                                 "请精简思考，直接调用 submit 工具提交完整代码。"})
                     continue
+                # 模型不再调用工具：先把文本回复记入轨迹（gave_up 遗言等）
+                session.log_round(step, "assistant_text", None,
+                                  {"text": (msg.content or "")[:3000]}, None)
                 # 模型不再调用工具：追问一次；若仍不调用则结束
                 if final["status"] == "no_submit" and submits == 0:
                     messages.append(_msg_to_dict(msg))
