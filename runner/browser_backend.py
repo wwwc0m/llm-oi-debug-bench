@@ -100,19 +100,25 @@ class LuoguBrowser:
         lang_ok = False
         for attempt in range(3):
             try:
-                # 当前语言框显示在 "复制" 附近，点开下拉
-                page.locator("div.lform-size-middle, .lfe-form-selected, "
-                             "[class*=select]").first.click(timeout=4000)
-                page.wait_for_timeout(1200)
+                # 用正则匹配当前显示的语言文本（C++98/11/14/17/20/23、Pascal 等）
+                page.locator(r"text=/^(C\+\+\d+|Pascal|Python|Java)/").first.click(timeout=4000)
+                page.wait_for_timeout(1500)
+                # 在下拉菜单中精确点 C++17
                 page.get_by_text("C++17", exact=True).first.click(timeout=4000)
                 page.wait_for_timeout(800)
-                lang_ok = True
-                print("[浏览器] 语言已选择：C++17", flush=True)
-                break
+                # 验证语言已切换（当前显示应为 C++17）
+                cur = page.locator(r"text=/^C\+\+\d+/").first.text_content(timeout=2000)
+                if "17" in (cur or ""):
+                    lang_ok = True
+                    print(f"[浏览器] 语言已选择：C++17（验证通过，当前={cur.strip()}）", flush=True)
+                    break
+                else:
+                    print(f"[浏览器] 语言验证失败（当前={cur.strip()}），重试...", flush=True)
             except Exception as e:
                 print(f"[浏览器] 语言选择尝试 {attempt + 1} 失败：{str(e)[:60]}", flush=True)
         if not lang_ok:
-            raise RuntimeError("无法选择 C++17 语言，中止提交以保护额度")
+            # 降级：不选语言直接提交（默认 C++98 兼容大部分代码）
+            print("[浏览器] 语言选择失败 3 次，降级为默认语言提交（风险自负）", flush=True)
         # 填充代码：剪贴板 + Ctrl+A / Ctrl+V（CodeMirror 6）
         print("[浏览器] 写入剪贴板并填充编辑器 ...", flush=True)
         page.evaluate("c => navigator.clipboard.writeText(c)", code)
