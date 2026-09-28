@@ -24,6 +24,8 @@
 | 题目 | 模型 | 轮次 | 结局 | 提交 | tokens(p/c) | 时间 |
 |------|------|------|------|------|-------------|------|
 <!-- AUTO:RUNS -->
+| P5655 | deepseek:deepseek-flash | run1 | exhausted | 5/5 | 6/10 原地五连（深伤死平台），第3轮 pragma CE 后回到同分 | 2026-09-28 22:1x |
+| P5655 | deepseek:deepseek-flash | run1 | exhausted | 5/5 | 1782058/157775 | 2026-09-28 21:04 |
 | P5612 | deepseek:deepseek-flash | run1 | exhausted | 5/5 | 6→7→9→11→11/20 爬升后平台，深伤典型 | 2026-09-28 22:0x |
 | P5612 | deepseek:deepseek-flash | run1 | exhausted | 5/5 | 611082/87240 | 2026-09-28 20:54 |
 | P17206 | deepseek:deepseek-flash | run1 | fixed | 1/5 | 8122/6958 | 2026-09-28 20:52 |
