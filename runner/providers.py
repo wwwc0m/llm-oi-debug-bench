@@ -32,6 +32,16 @@ def list_models():
     return out
 
 
+DEFAULT_EFFORT = os.environ.get("BENCH_EFFORT", "low")  # 默认 low（官方默认 high）
+
+
+def request_extra() -> dict:
+    """默认请求附加参数：DeepSeek 思考档 low（可用 BENCH_EFFORT/high 恢复或 BENCH_REQUEST_EXTRA 覆盖）。"""
+    if DEFAULT_EFFORT == "low":
+        return {"reasoning_effort": "low"}
+    return {}
+
+
 def make_client(model_spec: str):
     """model_spec 形如 'deepseek:deepseek-v4-pro' 或 'zhipu:自定义模型名'。"""
     from openai import OpenAI

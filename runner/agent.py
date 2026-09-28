@@ -198,12 +198,13 @@ class AgentRunner:
 
         # 可选注入请求参数（如 {"reasoning_effort":"low"}）——对照组实验用
         import os as _os
-        req_extra = None
+        from .providers import request_extra
+        req_extra = request_extra()
         if _os.environ.get("BENCH_REQUEST_EXTRA"):
             try:
-                req_extra = json.loads(_os.environ["BENCH_REQUEST_EXTRA"])
+                req_extra.update(json.loads(_os.environ["BENCH_REQUEST_EXTRA"]))
             except Exception:
-                req_extra = None
+                pass
 
         for step in range(60):  # 硬上限：防止死循环
             print(f"[agent] 第 {step + 1} 步：请求模型 {self.model} ...", flush=True)
