@@ -84,6 +84,8 @@ class LuoguBackend(PlatformBackend):
                 "time_limit_ms": tl,
                 "memory_limit_mb": round(ml_kb / 1024) if ml_kb else None,
                 "test_point_count": n_points,
+                "difficulty": prob.get("difficulty"),
+                "name": prob.get("name"),
                 "accept_languages": prob.get("acceptLanguages")}
 
     def submit(self, code: str, lang_name: str, ref: dict) -> str:

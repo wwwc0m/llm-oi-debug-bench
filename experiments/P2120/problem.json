@@ -1,0 +1,20 @@
+{
+  "id": "P2120",
+  "category": "classic",
+  "title": "[ZJOI2007] 仓库建设（洛谷 P2120）",
+  "difficulty": 6,
+  "statement": "",
+  "time_limit_ms": 1000,
+  "memory_limit_mb": 128,
+  "samples": [
+    {
+      "input": "3\n0 5 10\n5 3 100\n9 6 10",
+      "output": "32\n"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P2120",
+    "lang": "28"
+  }
+}

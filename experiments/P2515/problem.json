@@ -1,0 +1,20 @@
+{
+  "id": "P2515",
+  "category": "classic",
+  "title": "[HAOI2010] 软件安装（洛谷 P2515）",
+  "difficulty": 5,
+  "statement": "",
+  "time_limit_ms": 1000,
+  "memory_limit_mb": 125,
+  "samples": [
+    {
+      "input": "3 10\n5 5 6\n2 3 4\n0 1 1",
+      "output": "5"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P2515",
+    "lang": "28"
+  }
+}

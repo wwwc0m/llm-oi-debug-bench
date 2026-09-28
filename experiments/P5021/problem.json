@@ -1,0 +1,24 @@
+{
+  "id": "P5021",
+  "category": "classic",
+  "title": "[NOIP 2018 提高组] 赛道修建（洛谷 P5021）",
+  "difficulty": 5,
+  "statement": "",
+  "time_limit_ms": 1000,
+  "memory_limit_mb": 125,
+  "samples": [
+    {
+      "input": "7 1 \n1 2 10 \n1 3 5 \n2 4 9 \n2 5 8 \n3 6 6 \n3 7 7",
+      "output": "31"
+    },
+    {
+      "input": "9 3 \n1 2 6 \n2 3 3 \n3 4 5 \n4 5 10 \n6 2 4 \n7 2 9 \n8 4 7 \n9 4 4",
+      "output": "15"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P5021",
+    "lang": "28"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "P3957",
+  "category": "classic",
+  "title": "[NOIP 2017 普及组] 跳房子（洛谷 P3957）",
+  "difficulty": 5,
+  "statement": "",
+  "time_limit_ms": 2000,
+  "memory_limit_mb": 250,
+  "samples": [
+    {
+      "input": "7 4 10\n2 6\n5 -3\n10 3\n11 -3\n13 1\n17 6\n20 2",
+      "output": "2"
+    },
+    {
+      "input": "7 4 20\n2 6\n5 -3\n10 3\n11 -3\n13 1\n17 6\n20 2",
+      "output": "-1"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P3957",
+    "lang": "28"
+  }
+}

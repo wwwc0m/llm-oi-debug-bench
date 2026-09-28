@@ -38,7 +38,8 @@ def cmd_fetch(args):
     meta = {
         "id": args.pid,
         "category": args.category,
-        "title": args.title or f"洛谷 {args.pid}",
+        "title": args.title or f"{fetched.get('name') or ''}（洛谷 {args.pid}）",
+        "difficulty": fetched.get("difficulty"),
         "statement": "",
         "time_limit_ms": fetched.get("time_limit_ms"),
         "memory_limit_mb": fetched.get("memory_limit_mb"),

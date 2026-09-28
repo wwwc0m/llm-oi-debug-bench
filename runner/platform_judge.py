@@ -42,7 +42,7 @@ class LuoguJudge:
         md = fetched["statement_md"]
         with open(os.path.join(self.p.dir, "statement.md"), "w", encoding="utf-8") as f:
             f.write(md)
-        self.p.statement = self.p.statement or md[:6000]
+        self.p.statement = self.p.statement or md[:20000]  # 省选题面较长
 
     # ---------- 三工具 ----------
 
