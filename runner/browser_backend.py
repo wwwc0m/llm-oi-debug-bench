@@ -10,6 +10,7 @@
 """
 import os
 import re
+import tempfile
 import time
 
 from playwright.sync_api import sync_playwright
@@ -18,6 +19,34 @@ BASE = "https://www.luogu.com.cn"
 
 _PT_RE = re.compile(r"(\d+(?:\.\d+)?m?s/[0-9.]+[KMG]B)\s*(AC|WA|TLE|MLE|RE|UKE)\s*#(\d+)")
 _RECORD_RE = re.compile(r"/record/(\d+)")
+_LOCK_PATH = os.path.join(tempfile.gettempdir(), "bench_submit.lock")
+
+
+def _acquire_submit_lock(timeout_s: int = 360):
+    """跨进程提交互斥：同一时刻只允许一路浏览器走 填码→验证码→提交 流程。"""
+    deadline = time.time() + timeout_s
+    while time.time() < deadline:
+        try:
+            fd = os.open(_LOCK_PATH, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            os.write(fd, str(os.getpid()).encode())
+            os.close(fd)
+            return
+        except FileExistsError:
+            try:
+                if time.time() - os.path.getmtime(_LOCK_PATH) > 360:  # 陈旧锁清理
+                    os.remove(_LOCK_PATH)
+                    continue
+            except OSError:
+                pass
+            time.sleep(3)
+    raise TimeoutError("等待提交锁超时（其他进程提交中）")
+
+
+def _release_submit_lock():
+    try:
+        os.remove(_LOCK_PATH)
+    except OSError:
+        pass
 
 
 class LuoguBrowser:
