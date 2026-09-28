@@ -1,0 +1,28 @@
+{
+  "id": "P13623",
+  "category": "classic",
+  "title": "[ICPC 2024 APC] Symmetric Boundary（洛谷 P13623）",
+  "difficulty": 8,
+  "statement": "",
+  "time_limit_ms": 4000,
+  "memory_limit_mb": 512,
+  "samples": [
+    {
+      "input": "4\n0 0\n10 0\n8 9\n4 9",
+      "output": "90.0"
+    },
+    {
+      "input": "8\n8 10\n2 9\n0 8\n0 2\n2 0\n8 0\n10 2\n10 8",
+      "output": "-1"
+    },
+    {
+      "input": "6\n231 77\n359 20\n829 124\n998 461\n941 735\n879 825",
+      "output": "486567.9669655848"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P13623",
+    "lang": "28"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "id": "P13129",
+  "category": "classic",
+  "title": "[Ynoi Easy Round 2019] 有马加奈（洛谷 P13129）",
+  "difficulty": 7,
+  "statement": "",
+  "time_limit_ms": 2000,
+  "memory_limit_mb": 512,
+  "samples": [
+    {
+      "input": "5 5\n1 2 2 3\n2 3\n1 4 3\n2 3\n2 4\n2 1",
+      "output": "0 0\n0 0\n3 2\n3 2"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P13129",
+    "lang": "28"
+  }
+}

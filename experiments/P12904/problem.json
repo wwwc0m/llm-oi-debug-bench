@@ -1,0 +1,20 @@
+{
+  "id": "P12904",
+  "category": "classic",
+  "title": "[NERC 2020] Equilibrium Point /\\/\\（洛谷 P12904）",
+  "difficulty": 7,
+  "statement": "",
+  "time_limit_ms": 3000,
+  "memory_limit_mb": 512,
+  "samples": [
+    {
+      "input": "6 3.4 0.6",
+      "output": "()(())"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P12904",
+    "lang": "28"
+  }
+}

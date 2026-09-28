@@ -1,0 +1,20 @@
+{
+  "id": "P12911",
+  "category": "classic",
+  "title": "[POI 2020/2021 R2] 棋盘 / Projekt planszy（洛谷 P12911）",
+  "difficulty": 7,
+  "statement": "",
+  "time_limit_ms": 1000,
+  "memory_limit_mb": 64,
+  "samples": [
+    {
+      "input": "6",
+      "output": "4\n...#\n....\n##..\n###."
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P12911",
+    "lang": "28"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "P13626",
+  "category": "classic",
+  "title": "[ICPC 2024 APC] XOR Operations（洛谷 P13626）",
+  "difficulty": 8,
+  "statement": "",
+  "time_limit_ms": 2000,
+  "memory_limit_mb": 512,
+  "samples": [
+    {
+      "input": "3\n1 2 1",
+      "output": "4"
+    },
+    {
+      "input": "4\n852415 852415 852415 852415",
+      "output": "1"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P13626",
+    "lang": "28"
+  }
+}

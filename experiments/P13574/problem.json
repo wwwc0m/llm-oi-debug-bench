@@ -1,0 +1,28 @@
+{
+  "id": "P13574",
+  "category": "classic",
+  "title": "[CCPC 2024 重庆站] 魔弹（洛谷 P13574）",
+  "difficulty": 8,
+  "statement": "",
+  "time_limit_ms": 4000,
+  "memory_limit_mb": 512,
+  "samples": [
+    {
+      "input": "2\nRL\n",
+      "output": "1 1"
+    },
+    {
+      "input": "4\nLLRR\n",
+      "output": "0 24 24 0"
+    },
+    {
+      "input": "4\nRLRL\n",
+      "output": "9 6 6 9"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P13574",
+    "lang": "28"
+  }
+}

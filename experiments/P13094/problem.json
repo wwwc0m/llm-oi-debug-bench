@@ -1,0 +1,20 @@
+{
+  "id": "P13094",
+  "category": "classic",
+  "title": "[FJCPC 2025] 帕累托前沿（洛谷 P13094）",
+  "difficulty": 7,
+  "statement": "",
+  "time_limit_ms": 5000,
+  "memory_limit_mb": 1024,
+  "samples": [
+    {
+      "input": "8 7\n1 9 7 8 0 7 2 3\n19 20 5 6 1 14 9 5\n1 8\n3 7\n2 6\n4 4\n5 7\n3 8\n6 7",
+      "output": "1\n2\n1\n1\n1\n2\n1"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P13094",
+    "lang": "28"
+  }
+}
