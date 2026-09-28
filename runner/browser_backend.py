@@ -23,7 +23,10 @@ _RECORD_RE = re.compile(r"/record/(\d+)")
 class LuoguBrowser:
     # 持久化配置目录：浏览器 Cookie/历史跨实验保留，积累 Cloudflare 信任
     # （每次换全新临时配置 = 同 IP 反复出现"全新浏览器"，反而更可疑）
-    PROFILE_DIR = os.path.join(os.getcwd(), "browser_profile")
+    # 并行跑多路实验时用环境变量 BENCH_BROWSER_PROFILE 指定各自独立目录
+    PROFILE_DIR = os.environ.get(
+        "BENCH_BROWSER_PROFILE",
+        os.path.join(os.getcwd(), "browser_profile"))
 
     def __init__(self, headless: bool = False):
         self._pw = sync_playwright().start()
