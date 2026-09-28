@@ -1,0 +1,20 @@
+{
+  "id": "P17382",
+  "category": "classic",
+  "title": "[PacNW 2025] Farthest City（洛谷 P17382）",
+  "difficulty": 6,
+  "statement": "# [PacNW 2025] Farthest City\n\nThe State of Confusion contains $n$ cities, numbered $1$ through $n$, and $n$ bidirectional roads.\nRoad $i$ connects cities $a_i$ and $b_i$ and has length $d_i$ miles.\n\nAll cities are connected. No road connects a city to itself, and there is at most one road between\nany pair of cities. The distance between two cities is the length of the shortest path connecting\nthem.\n\nFor every city, find the distance to the city farthest from it.\n\nThe first line contains an integer $n$ ($3\\le n\\le3\\cdot10^5$), the number of cities.\n\nEach of the next $n$ lines contains three integers $a_i$, $b_i$, and $d_i$ ($1\\le d_i\\le10^7$),\ndescribing one road.\n\nOutput $n$ integers on one line. The $i$th integer is the distance from city $i$ to its farthest\ncity.",
+  "time_limit_ms": 3000,
+  "memory_limit_mb": 2048,
+  "samples": [
+    {
+      "input": "4\n1 2 1\n2 3 2\n3 4 3\n4 1 4",
+      "output": "4 5 3 5"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P17382",
+    "lang": "28"
+  }
+}

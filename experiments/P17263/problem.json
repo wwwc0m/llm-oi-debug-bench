@@ -1,0 +1,20 @@
+{
+  "id": "P17263",
+  "category": "classic",
+  "title": "[ICPC 2017 Urumqi R] Friends（洛谷 P17263）",
+  "difficulty": 6,
+  "statement": "# [ICPC 2017 Urumqi R] Friends\n\nSome people benefit from large and diverse networks of friends, while others prefer a smaller circle of friends and acquaintances. How about functions.\n\nConsider several functions with coefficients $p$ and $\\mu (0 \\le \\mu < p)$, denoted by\n\n$$f_0, f_1, \\dots, f_{p-1}.$$\n\nHere $p$ is a prime number and $\\mu$ is an integer.\n\nThe value of function $f_i$ at an integer $x \\in \\{0, 1, \\dots, p-1\\}$ is defined as\n\n$$f_i(x) = ((x^{i + 1} \\bmod p) + (\\mu^{i + 1} \\bmod p)) \\bmod 7.$$\n\nWe say a subset $S$ of $\\{0, 1, \\dots, p - 1\\}$ is a circle of friends, if all functions in $S$ share the same value at no less than half of positions in $\\{0, 1, \\dots, p-1\\}$. More specifically, a circle of friends is a subset $S=\\{a_1, a_2, \\dots, a_u\\}$ of $\\{0, 1, \\dots, p-1\\}$. It presents $u$ functions $f_{a_1}, f_{a_2}, \\dots, f_{a_u}$, and they have the same value at $v$ distinct locations in $\\{0, 1, \\dots , p - 1\\}$ where $2v \\ge p$.\n\nFurthermore, we say a circle of friends is “valuable” if it is maximal. That is to say that each bigger set containing a “valuable circle of friends” is not a circle of friends.\n\nPlease find and list all “valuable circles of friends”.\n\nThe inputs contains several test cases. The first line contains an integer $T (1 \\le T \\le 2^{10})$ which is the total number of test cases.\n\nFor each test case, a line contains two integers $p$ and $\\mu$ where $p$ is a prime number and $p \\le 100$.\n\nFor each test case, if the total number of “valuable circles of friends” is $F$, output $F + 1$ lines.\n\nEach of the first $F$ lines outputs a subset of $\\{0, 1, \\dots , p - 1\\}$, each of which should be a list of sorted numbers. All valuable circles of friends should be outputted according to the lexicographic order. The last line contains the string “END” as a terminator. ",
+  "time_limit_ms": 3000,
+  "memory_limit_mb": 512,
+  "samples": [
+    {
+      "input": "2\n5 3\n7 4",
+      "output": "0 4\n1\n2\n3\nEND\n0 3 6\n1 4\n2 5\nEND"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P17263",
+    "lang": "28"
+  }
+}

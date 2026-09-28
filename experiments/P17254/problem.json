@@ -1,0 +1,20 @@
+{
+  "id": "P17254",
+  "category": "classic",
+  "title": "线性筛 2（洛谷 P17254）",
+  "difficulty": 6,
+  "statement": "# 线性筛 2\n\n**套取数据直接输出抢最优解是恶劣的违规行为，根据情节轻重，最高可以直接封号。**\n\n> 天黑了。  \n> 天又亮了。  \n> 太阳照在这片洼地上，  \n> 照着一切微小而珍贵的生命。\n\n给定积性函数 $f$、模数 $P$，对于 $1\\le n\\le N$ 分别求出 $f(n)^n\\bmod P$。\n\n第一行两个正整数 $N,P$。\n\n之后 $\\pi(N)$ 行，第 $i$ 行 $\\left\\lfloor\\log_{p_i}N\\right\\rfloor$ 个整数，第 $j$ 个数为 $f(p_i^j)$，其中 $p_i$ 为第 $i$ 个素数。\n\n一行一个非负整数，表示 $\\displaystyle\\bigoplus_{n=1}^N(f(n)^n\\bmod P)$。\n\n对于所有数据，$1\\le N\\le3\\times10^7$，$10^8\\le P\\le10^9$，$0\\le f(p^k)<P$，**不保证** $P$ 是素数。\n\n时限已开至 std 的 1.5 倍以上。",
+  "time_limit_ms": 1500,
+  "memory_limit_mb": 512,
+  "samples": [
+    {
+      "input": "20 1000000000\n2 4 8 16\n3 9\n5\n7\n11\n13\n17\n19",
+      "output": "501702414"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P17254",
+    "lang": "28"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "id": "P17432",
+  "category": "classic",
+  "title": "[LBA-OI R5 B] 彼方的她（洛谷 P17432）",
+  "difficulty": 6,
+  "statement": "# [LBA-OI R5 B] 彼方的她\n\n:::align{center}\n彼方的她，彼岸之花\n:::\n\n![Aliya](https://cdn.luogu.com.cn/upload/image_hosting/0xrbm0af.webp)\n\n“我们之间相隔的距离好像刚好是 1000 光年。所以我看到的是 1000 年前的地球。这意味着，太阳的光经过 8 分钟后照在了你的身上，然后又带着你的模样，在宇宙中孤独旅行了 1000 年最后被我的眼睛捕捉到。我现在很有可能能看到当下的你哦。因此，我们可能很早就认识，当我们都在仰望星空的时候，我可能正在注视着你的眼睛。”——Aliya\n\nAliya 需要通过虫洞网络回到地球。虫洞网络是一张 $n$ 个点、$m$ 条边的无向图，第 $n$ 号点是她的起点，第 $1$ 号点是地球。每条边形如 $(u,v,w)$，其中 $w$ 为该虫洞隧道的“回溯时间”，表示可以回到 $w$ 个单位时间之前。\n\n她要从 $n$ 走到 $1$，并且：\n\n- 不能连续经过同一条边，即不能出现 $a \\to b \\to a$；\n- 节点 $1$ 只能作为终点，且恰好在路径末尾出现一次；\n- 其它节点可以重复经过。\n\n设路径总边权和为 $W$，给定目标时间 $t$，求 $\\min |W-t|$。\n\n边权和定义为路径包含的边的“回溯时间”总和。\n\n第一行三个整数 $n, m, t$。\\\n接下来 $m$ 行，每行三个整数 $u, v, w$， 表示一条无向边。\n\n输出一个整数，表示答案。\n\n### 样例解释\n\n- 样例 #1 的一条合法路径为 $4 \\rightarrow 2 \\rightarrow 3 \\rightarrow 1$；\n- 样例 #2 的一条合法路径为 $5 \\rightarrow 4 \\rightarrow 2 \\rightarrow 3 \\rightarrow 4 \\rightarrow 2 \\rightarrow 1$；\n- 样例 #3 的解释被 Aliya 弄丢啦。\n\n### 数据范围\n\n对于所有的测试数据，保证 $1 \\le n \\le 2 \\times 10^5$，$0 \\le m \\le  2 \\times 10^5$，$0 \\le t \\le 1000$，$0 \\le mt \\le 7 \\times 10^6$，$0 \\le w \\le 10^6$，且 $1$ 号点和 $n$ 号点连通、不存在重边和自环。\n\n**本题目采用子任务捆绑测试。**\n\n::cute-table{tuack}\n|子任务编号|$n \\le$|$m \\le$|$t \\le$|特殊性质|分值|\n|:-:|:-:|:-:|:-:|:-:|:-:|\n|Subtask #1|无限制|<|<|A|$4$|\n|Subtask #2|^|<|<|B|$6$|\n|Subtask #3|$50$|$100$|$1000$|无|$10$|  \n|Subtask #4|$200$|$1000$|$300$|^|^|\n|Subtask #5|$500$|$8000$|$100$|^|^|\n|Subtask #6|$6 \\times 10^4$|<|$80$|^|$15$|\n|Subtask #7|$10^5$|<|$50$|^|$20$|\n|Subtask #8|无限制|<|<|^|$25$|\n\n- 特殊性质 A：对于所有的无向边 $(u, v, w)$，均有 $w = 0$；\n- 特殊性质 B：$t = 0$。\n\n---\n\n本题目故事改编自视觉小说游戏《[彼方的她](https://store.steampowered.com/app/2704110/Aliya)》，~~欢迎各位前来游玩~~。\n\n题目背景图片的分辨率可是 6K 的哦。",
+  "time_limit_ms": 1200,
+  "memory_limit_mb": 256,
+  "samples": [
+    {
+      "input": "4 6 10\n1 4 4\n2 3 1\n1 3 6\n2 4 3\n3 4 2\n1 2 5\n",
+      "output": "0"
+    },
+    {
+      "input": "5 7 13\n2 3 3\n1 2 1\n3 4 1\n2 4 2\n4 5 3\n1 3 2\n3 5 2\n",
+      "output": "1"
+    },
+    {
+      "input": "1 0 1",
+      "output": "1"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P17432",
+    "lang": "28"
+  }
+}

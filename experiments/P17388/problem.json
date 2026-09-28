@@ -1,0 +1,20 @@
+{
+  "id": "P17388",
+  "category": "classic",
+  "title": "[PacNW 2025] Server Room（洛谷 P17388）",
+  "difficulty": 6,
+  "statement": "# [PacNW 2025] Server Room\n\nAudrey is system administrator for miHoYo! It is her job to manage the server room and keep her favorite video game, Honkai: Star Rail, up and running.\n\nAudrey manages a rectangular server room divided into $r$ rows and $c$ columns. Some cells contain servers, and some of those servers are already on.\n\nThe room has poor ventilation. If two orthogonally adjacent servers are both on, the room overheats and every server shuts down. Audrey cannot turn off a server that is already on.\n\nFind the maximum number of currently off servers Audrey can turn on without causing overheating, and count the number of distinct ways to turn on that many servers.\n\n\nThe first line contains two positive integers $r$ and $c$ with $1\\le r\\cdot c\\le400$.\n\nEach of the next $r$ lines contains a string of length $c$ over `0`, `1`, and `2`. A `0` denotes a cell without a server, a `1` an off server, and a `2` an on server. No two initially on servers are adjacent.\n\n\nLet $s$ be the maximum number of additional servers that can be turned on, and let $w$ be the number of ways to turn on exactly $s$ servers. Output $s$ and $w\\bmod998244353$.\n",
+  "time_limit_ms": 5000,
+  "memory_limit_mb": 2048,
+  "samples": [
+    {
+      "input": "5 5\n11011\n11001\n00200\n10010\n10000",
+      "output": "6 4"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P17388",
+    "lang": "28"
+  }
+}

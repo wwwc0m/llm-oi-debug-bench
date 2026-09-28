@@ -1,0 +1,20 @@
+{
+  "id": "P17190",
+  "category": "classic",
+  "title": "[ICPC 2017 Hong Kong R] Triangle（洛谷 P17190）",
+  "difficulty": 6,
+  "statement": "# [ICPC 2017 Hong Kong R] Triangle\n\nBob draws $N$ black points and $N$ white points in the plane, and draws directed edges between each pair of them. For each pair of points $p$ and $q$, Bob can draw an edge according to the following rules.\n\n*   If these two points share the same color, put an edge $p \\to q$ or $q \\to p$ optionally.\n*   If they have different colors, suppose that $p$ is white and $q$ is black, then draw the edge $p \\to q$ if $\\text{dist}(p, q) > D$, or $q \\to p$ if not.\n\nThe distance function is defined as $\\text{dist}(p, q) = |p.x - q.x| + |p.y - q.y|$.\n\nBob thinks that a beautiful triangle of points $p$, $q$ and $r$ (which is a triple of three points) should satisfy the following conditions:\n\n*   At least one of them is black, and at least one of them is white.\n*   $p \\to q$, $q \\to r$, and $r \\to p$ are all the edges between them.\n\nNow Bob wants to know the minimum number and the maximum number of beautiful triangles could exist.\n\nThe input contains several test cases, please handle it to the end of file.\n\nFor each test case, the first line contains two integers $N$ ($N \\le 100000$) and $D$. In the next $N$ lines, each line contains two integers indicating the coordinate of a white point. In the next $N$ lines, each line contains two integers indicating the coordinate of a black point. Some points may share the same coordinate.\n\nAll numbers in input are non-negative integers and less than $2^{31}$.\n\nFor each test case, output two integers indicating the minimum number and the maximum number of beautiful triangles. ",
+  "time_limit_ms": 2000,
+  "memory_limit_mb": 512,
+  "samples": [
+    {
+      "input": "2 1\n1 2\n1 1\n3 1\n2 2",
+      "output": "0 2"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P17190",
+    "lang": "28"
+  }
+}

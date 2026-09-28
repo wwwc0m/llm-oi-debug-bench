@@ -1,0 +1,24 @@
+{
+  "id": "P17238",
+  "category": "classic",
+  "title": "『STA - R10』Petal Dance（洛谷 P17238）",
+  "difficulty": 6,
+  "statement": "# 『STA - R10』Petal Dance\n\nAqua 给你两个正整数 $n,m$，你需要对每个整数 $1\\le k\\le n$ 求\n$$a_k=\\sum_{i=1}^n\\sum_{j=1}^n\\gcd(ij,k)$$\n的值。答案对 $m$ 取模。\n\n一行两个正整数 $n,m$。\n\n因为输出太多不好，所以你只需要输出 $\\displaystyle\\bigoplus_{k = 1}^n \\left( k \\cdot (a_k\\bmod m) \\right)$ 的值就可以了（注意取模的位置）。\n\n样例 1 解释：\n$\\{a_k\\} = \\{100, 175, 202, 265, 244, 347, 214, 369, 340, 427\\}$。\n\n**本题采用捆绑测试。**\n\n| Subtask | 分值 | 特殊性质 | \n|:---:|:---:|:---:|\n| 1 | 5 | $n \\le 500$ | \n| 2 | 5 | $m = 2$ |\n| 3 | 15 | $n \\le 5\\times 10^3$ | \n| 4 | 15 | $n \\le 10^5$ | \n| 5 | 20 | $n \\le 10^6$ | \n| 6 | 40 | 无 | \n\n对于全部数据：$1\\le n\\le 5\\times 10^6$，$1\\le m \\le 10^9$。",
+  "time_limit_ms": 2000,
+  "memory_limit_mb": 512,
+  "samples": [
+    {
+      "input": "10 998244353",
+      "output": "7854"
+    },
+    {
+      "input": "1000000 998244353",
+      "output": "666900907572623"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P17238",
+    "lang": "28"
+  }
+}
