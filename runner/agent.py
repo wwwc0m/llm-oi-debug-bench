@@ -138,13 +138,14 @@ def _msg_to_dict(msg) -> dict:
 class AgentRunner:
     def __init__(self, judge, client, model: str,
                  phase: str = "A", starter_code: str | None = None,
-                 out_dir: str | None = None):
+                 out_dir: str | None = None, max_submits: int = MAX_SUBMITS):
         self.judge = judge
         self.client = client
         self.model = model
         self.phase = phase
         self.starter_code = starter_code
         self.out_dir = out_dir  # 每轮 round<N>.cpp / round<N>.result.json 落盘目录
+        self.max_submits = max_submits  # 本运行剩余额度（题目总额度 5 跨运行累计）
 
     def _remember_round(self, n: int, code: str, detail: str, messages: list):
         """把每次提交的代码与判定写入固定位置的【提交历史】消息，长对话截断不丢失。"""
@@ -179,7 +180,7 @@ class AgentRunner:
         if self.phase == "B" and self.starter_code:
             user_prompt += "\n\n【场上已有代码（判定不完全正确，请修复）】\n```cpp\n" + self.starter_code + "\n```"
 
-        sys_content = SYSTEM_PROMPT.format(K=MAX_SUBMITS)
+        sys_content = SYSTEM_PROMPT.format(K=self.max_submits)
         if self.phase == "B":
             sys_content += "\n\n" + PHASE_B_EXTRA
 
@@ -243,7 +244,7 @@ class AgentRunner:
                             # 样例未过的提交：计入提交次数（协议 v2），并落盘记录样例数据
                             submits += 1
                             result["detail"] = (f"提交被退回（样例未过，已计入提交次数，"
-                                                f"剩余 {MAX_SUBMITS - submits} 次）")
+                                                f"剩余 {self.max_submits - submits} 次）")
                             self._save_round(submits, code, result)
                             session.log_round(step, "local_gate:samples", code,
                                               {"errors": (result.get("errors") or "")[:2000]}, None)
@@ -265,7 +266,7 @@ class AgentRunner:
                     if name == "submit" and result.get("all_ac"):
                         final = {"status": "fixed", "rounds_used": submits}
                         return final, usage_total, submits
-                if submits >= MAX_SUBMITS:
+                if submits >= self.max_submits:
                     final = {"status": "exhausted", "rounds_used": submits}
                     break
             else:

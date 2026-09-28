@@ -127,11 +127,23 @@ def _run_one(problem_id: str, model_spec: str, phase: str, mutant: str,
     out_dir = os.path.join(runs_dir, f"run{max(ks, default=0) + 1}")
     os.makedirs(out_dir, exist_ok=True)
 
+    # 题目级提交额度（总额 5 次，跨运行累计）
+    quota_path = os.path.join(p.dir, "quota.json")
+    quota = {"used": 0}
+    if os.path.exists(quota_path):
+        quota = json.load(open(quota_path, encoding="utf-8"))
+    remaining = MAX_SUBMITS - int(quota.get("used", 0))
+    if remaining <= 0:
+        sys.exit(f"题目 {p.id} 提交额度已用尽（{quota.get('used')}/{MAX_SUBMITS}），不可再跑")
+    print(f"[quota] {p.id} 已用 {quota.get('used', 0)}/{MAX_SUBMITS} 次，本运行剩余 {remaining} 次")
+
     j = LuoguJudge(p)
     sess = Session(out_dir, p.id, model_spec, phase,
-                   extra={"mutant": mutant, "repeat": repeat})
+                   extra={"mutant": mutant, "repeat": repeat,
+                          "prior_used": quota.get("used", 0)})
     runner = AgentRunner(j, client, model, phase=phase,
-                         starter_code=starter_code, out_dir=out_dir)
+                         starter_code=starter_code, out_dir=out_dir,
+                         max_submits=remaining)
     final, usage, submits = runner.run(sess)
     j.cleanup()
     summary = {"problem": p.id, "model": model_spec, "phase": phase,
@@ -140,6 +152,8 @@ def _run_one(problem_id: str, model_spec: str, phase: str, mutant: str,
     with open(os.path.join(out_dir, "summary.json"), "w", encoding="utf-8") as f:
         json.dump(summary, f, ensure_ascii=False, indent=2)
     _update_progress(p.id, model_spec, max(ks, default=0) + 1, final, submits, usage)
+    quota["used"] = int(quota.get("used", 0)) + submits
+    json.dump(quota, open(quota_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     return summary
 
