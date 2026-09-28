@@ -1,0 +1,22 @@
+{
+  "id": "P10594",
+  "category": "classic",
+  "title": "BZOJ2445 最大团（洛谷 P10594）",
+  "difficulty": 7,
+  "statement": "# BZOJ2445 最大团\n\n题目来自原 BZOJ，我们承认题面及原数据的版权均属于原 BZOJ 或将题目授权给 BZOJ 使用的出题人。如果您是版权所有者且认为我们侵犯了您的权益，可联系我们。\n\n一个 $n$ 个点的无向图被叫做是一个 symmetric labeled cliquer，当且仅当该图的任意一个极大连通子图拥有相同的点数，并且任意一个极大连通子图都是完全图。\n\n现有 $m$ 种颜色和所有含有 $n$ 个点且节点有标号的 symmetric labeled cliquer。我们需要将每个 symmetric labeled cliquer 都染上一种颜色，两个不同的 symmetric labeled cliquer 可以染相同颜色，求方案数对 $10^9-401$ 取模的结果。\n\n第一行读入一个正整数 $T$，表示数据组数。\n\n接下来每行包含两个正整数 $n,m$，含义如题所述。\n\n输出包含 $T$ 行，每行输出答案。\n\n数据保证，$1\\leq T\\leq 2$，$1\\leq n,m\\leq 2\\times 10^9$。",
+  "time_limit_ms": 1000,
+  "memory_limit_mb": 512,
+  "samples": [
+    {
+      "input": "1\n4 2",
+      "output": "32"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P10594",
+    "lang": "28"
+  },
+  "ac_rate": 36.9,
+  "total_ac": 73
+}
