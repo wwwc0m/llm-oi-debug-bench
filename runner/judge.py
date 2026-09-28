@@ -20,13 +20,16 @@ class Problem:
         self.category = meta["category"]
         self.title = meta["title"]
         self.statement = meta["statement"]
-        self.time_limit_ms = meta["time_limit_ms"]
-        self.memory_limit_mb = meta["memory_limit_mb"]
-        self.samples = meta["samples"]  # [{"input": ..., "output": ...}]
+        self.time_limit_ms = meta.get("time_limit_ms")
+        self.memory_limit_mb = meta.get("memory_limit_mb")
+        self.samples = meta.get("samples") or []
+        self.source = meta.get("source")  # {"platform": "luogu", "pid": "P1001"} 等
         with open(os.path.join(self.dir, "solution.cpp"), encoding="utf-8") as f:
             self.reference_solution = f.read()
-        # build 命令生成测试之前，允许以空测试集加载
-        self.hidden = self._load_hidden() if require_hidden else []
+        # 平台题的隐藏测试在 OJ 侧；本地题在 tests/ 目录；build 之前允许空
+        self.hidden = []
+        if require_hidden and not self.source:
+            self.hidden = self._load_hidden()
 
     def _load_hidden(self):
         cases = []

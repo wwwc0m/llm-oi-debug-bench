@@ -4,6 +4,7 @@
   python -m runner.cli build  --problem problems/classic-inv-pairs   # 生成隐藏测试并跑标程出答案
   python -m runner.cli judge  --problem ... --code path/to/code.cpp  # 判一份代码（调题目/验注错变体用）
   python -m runner.cli run    --problem ... --model deepseek:deepseek-chat [--phase A|B] [--mutant overflow]
+  python -m runner.cli fetch  --platform luogu --pid P1001 --id lg1001   # 从平台拉题
   python -m runner.cli models                                       # 列出可用模型
 """
 import argparse
@@ -77,18 +78,59 @@ def cmd_models(args):
         print(m)
 
 
+def cmd_fetch(args):
+    """从平台拉取题面/样例/限制，生成 problems/<id>/problem.json。"""
+    from .platforms.codeforces import CodeforcesBackend
+    from .platforms.luogu import LuoguBackend
+    if args.platform == "luogu":
+        backend, ref = LuoguBackend(), {"platform": "luogu", "pid": args.pid,
+                                        "lang": args.lang or "28"}
+    elif args.platform == "codeforces":
+        backend, ref = CodeforcesBackend(), {"platform": "codeforces",
+                                             "url": args.url}
+    else:
+        sys.exit(f"未知平台：{args.platform}")
+    fetched = backend.fetch_problem(ref)
+    out_dir = os.path.join("problems", args.id)
+    os.makedirs(out_dir, exist_ok=True)
+    meta = {
+        "id": args.id,
+        "category": args.category,
+        "title": args.title or f"{args.platform}:{args.pid or args.url}",
+        "statement": "（平台题，题面见 statement.txt）",
+        "time_limit_ms": fetched.get("time_limit_ms"),
+        "memory_limit_mb": fetched.get("memory_limit_mb"),
+        "samples": fetched["samples"],
+        "source": ref,
+    }
+    with open(os.path.join(out_dir, "problem.json"), "w", encoding="utf-8") as f:
+        json.dump(meta, f, ensure_ascii=False, indent=2)
+    from bs4 import BeautifulSoup
+    text = BeautifulSoup(fetched["statement_html"], "html.parser").get_text("\n", strip=True)
+    with open(os.path.join(out_dir, "statement.txt"), "w", encoding="utf-8") as f:
+        f.write(text)
+    print(f"已创建 problems/{args.id}/（题面 {len(text)} 字，样例 {len(fetched['samples'])} 组）")
+
+
 def cmd_run(args):
     from . import providers
+    from .platform_judge import open_judge
     p = _load_problem(args.problem)
     client, model = providers.make_client(args.model)
 
     starter = None
     if args.phase == "B":
-        mutant_path = os.path.join(p.dir, "mutants", f"{args.mutant}.cpp")
-        with open(mutant_path, encoding="utf-8") as f:
-            starter = f.read()
+        cand = [args.starter] if args.starter else [
+            os.path.join(p.dir, "mutants", f"{args.mutant}.cpp")]
+        for path in cand:
+            if path and os.path.exists(path):
+                with open(path, encoding="utf-8") as f:
+                    starter = f.read()
+                break
+        if starter is None:
+            sys.exit("阶段 B 需要起始代码：--starter 文件 或 --mutant 名称")
 
-    j = Judge(p)
+    j = open_judge(p, backend_hint=args.backend)
     sess = Session("results/raw", p.id, args.model, args.phase,
                    extra={"mutant": args.mutant, "repeat": args.repeat})
     runner = AgentRunner(j, client, model, phase=args.phase, starter_code=starter)
@@ -119,8 +161,23 @@ def main():
     r.add_argument("--model", required=True)
     r.add_argument("--phase", choices=["A", "B"], default="A")
     r.add_argument("--mutant", default="overflow")
+    r.add_argument("--starter", default=None,
+                   help="阶段 B 起始代码路径（默认用 mutants/<mutant>.cpp）")
     r.add_argument("--repeat", type=int, default=0)
+    r.add_argument("--backend", default=None,
+                   help="强制指定判题后端（默认按题目 source 自动选择）")
     r.set_defaults(func=cmd_run)
+
+    f = sub.add_parser("fetch", help="从平台拉题生成题目目录")
+    f.add_argument("--platform", choices=["luogu", "codeforces"], required=True)
+    f.add_argument("--pid", default=None, help="洛谷题号，如 P1001")
+    f.add_argument("--url", default=None, help="CF 题目 URL")
+    f.add_argument("--id", required=True, help="本地题目目录名")
+    f.add_argument("--lang", default=None, help="提交语言（洛谷语言代号）")
+    f.add_argument("--category", default="classic",
+                   choices=["classic", "reskin", "novel"])
+    f.add_argument("--title", default=None)
+    f.set_defaults(func=cmd_fetch)
 
     args = ap.parse_args()
     args.func(args)

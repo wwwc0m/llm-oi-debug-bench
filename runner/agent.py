@@ -42,6 +42,8 @@ def _tools_schema():
 
 
 def _fmt_submit(res: dict) -> str:
+    if "results" not in res:
+        return res.get("detail") or str(res)
     lines = [f"提交结果：{res['passed']}/{res['total']} 个测试点通过。"]
     for r in res["results"]:
         lines.append(f"  测试点 {r['case']}: {'通过' if r['verdict'] == 'AC' else '未通过（' + r['verdict'] + '）'}")
@@ -69,9 +71,11 @@ class AgentRunner:
 
     def run(self, session: Session):
         p = self.judge.p
+        limit_line = (f"【时间限制】{p.time_limit_ms}ms；【内存限制】{p.memory_limit_mb}MB"
+                      if p.time_limit_ms else "【限制】以评测平台判题为准（本地自测仅作参考）")
         user_prompt = (
             f"【题目】{p.title}\n\n{p.statement}\n\n"
-            f"【时间限制】{p.time_limit_ms}ms；【内存限制】{p.memory_limit_mb}MB\n\n"
+            f"{limit_line}\n\n"
             f"【示例输入/输出】\n" + "\n".join(
                 f"样例{i+1}：\n输入：\n{s['input']}\n输出：\n{s['output']}"
                 for i, s in enumerate(p.samples))
@@ -113,8 +117,12 @@ class AgentRunner:
                     elif name == "submit":
                         submits += 1
                         result = self.judge.submit(code)
-                        result = {k: v for k, v in result.items() if k != "results"} | \
-                                 {"detail": _fmt_submit(result)} if result.get("ok") else result
+                        if result.get("ok"):
+                            # 模型只看黑盒摘要，不看原始明细
+                            view = {k: result[k] for k in ("ok", "all_ac", "passed", "total")
+                                    if k in result}
+                            view["detail"] = result.get("detail") or _fmt_submit(result)
+                            result = view
                     else:
                         result = {"ok": False, "errors": f"未知工具 {name}"}
                     session.log_round(step, name, code, result, None)

@@ -12,11 +12,28 @@
 
 被试（各家 LLM API）获得的信息与工具，与真实 OI 选手对齐：
 
-- 题面（含示例输入/输出）
+- 题面（含示例输入/输出，从平台拉取缓存到本地）
 - 工具 1：`gcc` 本地编译（编译报错完整可见）
 - 工具 2：在示例数据上本地运行自测
-- 工具 3：提交判题 → 反馈：每个样例 通过/未通过；未通过标注 WA/TLE/MLE
-- 测试点**内容**不可见（黑盒），最多 K=10 轮提交
+- 工具 3：**提交到真实 OJ 平台判题** → 黑盒反馈：每个测试点 通过/未通过，
+  未通过标注 WA/TLE/MLE（测试点内容不可见），最多 K=10 轮
+
+## 判题架构
+
+```
+problems/<id>/problem.json 的 source 字段决定判题后端：
+  {"platform": "luogu", "pid": "P1001"}       → 洛谷（主力）
+  {"platform": "codeforces", "url": "..."}    → Codeforces（备选）
+  无 source（本地题，tests/ 目录自带隐藏测试）  → 本地判题器（兜底/调试）
+```
+
+- **洛谷为主力**：题面/样例/限制可拉取，每个测试点状态可见；
+  个人私有题目可上传——自编 reskin/novel 题进真实判题的唯一公开渠道。
+  凭据用浏览器 Cookie（`LUOGU_UID` / `LUOGU_CLIENT_ID`，见 .env.example）。
+- Codeforces 备选：onlinejudge 库提交 + 官方 API 读结果。
+- 本地判题器保留：协议调试、离线开发、以及暂不便上传平台的题目。
+
+拉取平台题目：`python -m runner.cli fetch --platform luogu --pid P1001 --id lg1001`
 
 ## 实验结构
 
