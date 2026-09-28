@@ -45,7 +45,10 @@ python -m runner.cli run --problem P1129 --model deepseek:deepseek-v4-pro
 2. **不要提交 `.env`**（含 API key 与洛谷 Cookie）；不要修改 `experiments/*/runs/` 下已有产物。
 3. **两次真实提交之间至少间隔 60 秒**（代码已内置限速，不要绕过）；尊重洛谷
    "个人练习免费、自动化批量需走开放平台"的声明。
-4. 跑实验前确认：用户在电脑前（需要点验证码）；`python tests/test_smoke.py` 通过。
+4. 跑实验前确认：`.env` 三项齐全（`ZHIPU_API_KEY`、`DEEPSEEK_API_KEY`、
+   `LUOGU_UID`+`LUOGU_CLIENT_ID` 洛谷 Cookie，导出方法见 REQUIREMENTS.md 第 3 步；
+   **缺洛谷 Cookie 时提交必失败**）；用户在电脑前（需要点验证码）；
+   `python tests/test_smoke.py` 通过。
 5. 实验中断/失败：run 目录会保留部分 session.jsonl，属正常记录，不要删除；
    重新运行会自动创建 run<k+1>。
 6. 每次实验结束（无论成败）检查 `PROGRESS.md` 是否新增了对应行；batch 结束检查

@@ -30,17 +30,57 @@ pip install -r requirements.txt
 （`runner/browser_backend.py`）完成，不使用 browser-use 等 MCP。
 若由 ZCode/Claude Code 等 agent 操作，仅需其自带的基础工具（Bash/文件读写）。
 
-## 凭据（`.env`，已被 .gitignore，绝不入库）
+## 首次使用配置（必读）
+
+### 第 1 步：创建 `.env`
+
+```bash
+cp .env.example .env
+```
+
+`.env` 已被 `.gitignore` 排除，**永远不要提交到仓库**。
+
+### 第 2 步：填写 LLM API Key（4 个被试模型）
+
+| 环境变量 | 值的来源 |
+|----------|---------|
+| `ZHIPU_API_KEY` | 智谱开放平台 GLM Coding Plan 订阅的 API Key（`xxx.yyy` 长格式）。**注意必须走 coding plan 端点**（代码已内置 `open.bigmodel.cn/api/coding/paas/v4`）；若误用按量付费 key 会报 429"余额不足" |
+| `DEEPSEEK_API_KEY` | DeepSeek 开放平台的 `sk-` 开头 key（api.deepseek.com） |
+
+一个 key 可覆盖同厂两个模型（glm-5.3 / glm-5.3-flash 共用一个，deepseek 两个共用一个）。
+
+### 第 3 步：填写洛谷 Cookie（**不填则无法提交判题**）
+
+拉题（fetch）匿名即可，但**提交代码必须带登录态**。需要从浏览器导出两个 Cookie 值：
+
+1. 用浏览器登录 [luogu.com.cn](https://www.luogu.com.cn)（**强烈建议注册专用小号**，勿用主力账号）
+2. 按 `F12` 打开开发者工具 → 顶部选 **Application**（应用）标签
+   → 左侧 **Storage → Cookies → `https://www.luogu.com.cn`**
+3. 在 Cookie 列表中找到这两行，复制各自的 **Value**：
+
+| Cookie 名 | 填入 `.env` 的变量 |
+|-----------|-------------------|
+| `_uid`（纯数字，你的用户 ID） | `LUOGU_UID` |
+| `__client_id`（48 位十六进制） | `LUOGU_CLIENT_ID` |
 
 ```ini
-# LLM 被试（4个）
-ZHIPU_API_KEY=...        # GLM Coding Plan 订阅 key（端点 open.bigmodel.cn/api/coding/paas/v4）
-DEEPSEEK_API_KEY=...     # api.deepseek.com
-
-# 洛谷判题（建议专用小号；浏览器 F12 → Application → Cookies 导出）
-LUOGU_UID=...
-LUOGU_CLIENT_ID=...
+LUOGU_UID=2312631
+LUOGU_CLIENT_ID=yjpiwjkmpd37...（48位）
 ```
+
+**Cookie 失效的表现与处理**：洛谷会话过期（数周）、账号在其他设备重新登录、或触发风控时，
+提交会报错或页面被反爬拦截。处理：重新按上述步骤导出一次新值，更新 `.env` 即可，无需改代码。
+
+### 第 4 步：验证
+
+```bash
+python tests/test_smoke.py      # 离线全链路自检（不需要任何密钥）
+python -m runner.cli models     # 应列出 4 个被试模型（验证 API key）
+python -m runner.cli fetch --pid P1129   # 验证洛谷连通（匿名即可）
+```
+
+三项都通过即可开跑实验。**跑实验时人要在电脑前**：每次真实提交洛谷会弹图片验证码，需人工点击。
+
 
 被试模型（`runner/providers.py` 注册，`BENCH_MODELS` 环境变量可覆盖）：
 
