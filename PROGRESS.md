@@ -23,6 +23,8 @@
 | 题目 | 模型 | 轮次 | 结局 | 提交 | tokens(p/c) | 时间 |
 |------|------|------|------|------|-------------|------|
 <!-- AUTO:RUNS -->
+| P17465 | deepseek:deepseek-flash | run3 | fixed(low档) | 4/5 | 完整阶梯：0→6→9→10/10，黑盒反馈驱动登顶（high档同题首提交满分） | 2026-09-28 19:45 |
+| P17465 | deepseek:deepseek-flash | run3 | fixed | 4/5 | 672223/133299 | 2026-09-28 19:34 |
 | P16926 | deepseek:deepseek-flash | run3 | gave_up | 4/5 | 最终32/80未AC；全程轨迹：20分→TLE22/80→32/80→32/80平台期→放弃 | 2026-09-28 19:40 |
 | P16926 | deepseek:deepseek-flash | run3 | gave_up | 1/5 | 330038/136395 | 2026-09-28 19:33 |
 | P16926 | deepseek:deepseek-flash | run2 | error | 2/5 | 640401/193124 | 2026-09-28 19:20 |
