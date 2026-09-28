@@ -19,6 +19,7 @@
 | 题目 | 模型 | 轮次 | 结局 | 提交 | tokens(p/c) | 时间 |
 |------|------|------|------|------|-------------|------|
 <!-- AUTO:RUNS -->
+| P16629 | deepseek:deepseek-flash | run1 | fixed | 1/5 | 92256/53325 | 2026-09-28 18:25 |
 | P17237 | deepseek:deepseek-flash | run1 | error | 0/5 | 1206/65536（思考烧穿空响应） | 2026-09-28 18:41 |
 | P17237 | deepseek:deepseek-flash | run1 | error | 0/5 | 1206/65536 | 2026-09-28 18:16 |
 | P17263 | deepseek:deepseek-flash | run1 | fixed | 1/5 | 1108418/100461 | 2026-09-28 18:16 |
