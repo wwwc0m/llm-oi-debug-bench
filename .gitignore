@@ -1,0 +1,19 @@
+# 密钥与环境
+.env
+*.key
+
+# 实验产物（原始数据本地保留，汇总图表选择性入库）
+results/raw/
+results/code_samples/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# IDE / 系统
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
