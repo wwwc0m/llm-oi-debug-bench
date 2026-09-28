@@ -53,6 +53,11 @@ python -m runner.cli run --problem P1129 --model deepseek:deepseek-v4-pro
    重新运行会自动创建 run<k+1>。
 6. 每次实验结束（无论成败）检查 `PROGRESS.md` 是否新增了对应行；batch 结束检查
    `experiments/<题号>/runs/batch_summary.json`。
+7. **严禁删除 runs/ 目录**（哪怕看似"半截"）。session.jsonl 里存着每次工具调用的完整代码，
+'
+   '   是中断恢复的唯一依据；清理必须先核对 quota.json 与提交记录并经用户确认。
+'
+   '   （两次教训：P17254 四次提交、P17304/P17344 首版代码，均因误删丢失/靠洛谷救回。）
 
 ## 数据结构速查
 
