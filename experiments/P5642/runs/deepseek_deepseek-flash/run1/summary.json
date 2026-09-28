@@ -1,0 +1,15 @@
+{
+  "problem": "P5642",
+  "model": "deepseek:deepseek-flash",
+  "phase": "A",
+  "run": 1,
+  "final": {
+    "status": "gave_up",
+    "rounds_used": 1
+  },
+  "usage": {
+    "prompt_tokens": 365080,
+    "completion_tokens": 102787
+  },
+  "submits": 1
+}

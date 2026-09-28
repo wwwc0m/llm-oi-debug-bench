@@ -24,6 +24,11 @@
 | 题目 | 模型 | 轮次 | 结局 | 提交 | tokens(p/c) | 时间 |
 |------|------|------|------|------|-------------|------|
 <!-- AUTO:RUNS -->
+| P17432 | deepseek:deepseek-flash | run1 | fixed | 2/5 | 59/60→AC 60/60，近失一击修复（A类第7例） | 2026-09-28 21:2x |
+| P5642 | deepseek:deepseek-flash | run1 | gave_up(过早弃疗) | 1/5 | 18/25(72%)部分分后主动放弃，4次额度未用——与P16531过度验证互为镜像 | 2026-09-28 21:2x |
+| P17432 | deepseek:deepseek-flash | run1 | fixed | 2/5 | 682424/106345 | 2026-09-28 21:22 |
+| P5642 | deepseek:deepseek-flash | run1 | gave_up | 1/5 | 365080/102787 | 2026-09-28 21:22 |
+| P17388 | deepseek:deepseek-flash | run1 | fixed | 1/5 | 28718/19408 | 2026-09-28 21:22 |
 | P5611 | deepseek:deepseek-flash | run1 | exhausted | 5/5 | 0→10→2→10→15/45 锯齿爬升未破1/3，深伤标本 | 2026-09-28 21:12 |
 | P5617 | deepseek:deepseek-flash | run1 | fixed | 1/5 | 751712/69906 | 2026-09-28 21:12 |
 | P5611 | deepseek:deepseek-flash | run1 | exhausted | 5/5 | 1177417/134354 | 2026-09-28 21:10 |
