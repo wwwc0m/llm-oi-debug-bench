@@ -82,7 +82,11 @@ def _stream_create(client, model: str, messages: list, tools: list):
         return stream
 
     content_parts, calls, usage, finish = [], {}, None, None
+    n_chunks = 0
     for chunk in stream:
+        n_chunks += 1
+        if n_chunks % 50 == 0:
+            print(f"[agent] …思考流式接收中（已 {n_chunks} 块）", flush=True)
         if getattr(chunk, "usage", None):
             usage = chunk.usage
         if not getattr(chunk, "choices", None):
