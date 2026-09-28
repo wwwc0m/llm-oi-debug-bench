@@ -130,6 +130,10 @@ class LuoguBrowser:
                     status = "PARTIAL" if v == "PARTIAL" else v
                     break
             pts = _PT_RE.findall(text)
+            if status is None and not pts:
+                # 页面可能未加载完成（P16926 UNKNOWN 事故）：继续轮询，超时才返回 UNKNOWN
+                time.sleep(5)
+                continue
             passed = sum(1 for _, s, _ in pts if s == "AC")
             total = len(pts)
             detail = (f"{status or 'UNKNOWN'}（通过测试点 {passed}/{total}）"
