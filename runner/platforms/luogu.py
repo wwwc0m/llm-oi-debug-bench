@@ -96,12 +96,18 @@ class LuoguBackend(PlatformBackend):
         _LAST_SUBMIT[0] = time.time()
 
         pid = ref["pid"]
-        lang = ref.get("lang", "28")  # 28 = C++14（联调时核对语言代号）
-        self.sess.get(f"{BASE}/problem/{pid}", timeout=30)  # 刷新反爬 Cookie
+        lang = ref.get("lang", "28")
+        # CSRF token 每次页面加载由 <meta name="csrf-token"> 下发
+        g = self.sess.get(f"{BASE}/problem/{pid}", timeout=30)
+        m = re.search(r'<meta\s+name="csrf-token"\s+content="([^"]+)"', g.text)
+        if not m:
+            raise RuntimeError("未从页面取到 csrf-token（登录态可能失效）")
+        csrf = m.group(1)
         r = self.sess.post(
             f"{BASE}/fe/api/problem/submit/{pid}",
             data={"code": code, "lang": lang, "enableO2": "1"},
-            headers={"x-csrf-token": os.environ.get("LUOGU_CLIENT_ID", "")},
+            headers={"x-csrf-token": csrf, "x-luogu-type": "content-only",
+                     "referer": f"{BASE}/problem/{pid}", "origin": BASE},
             timeout=30,
         )
         r.raise_for_status()
