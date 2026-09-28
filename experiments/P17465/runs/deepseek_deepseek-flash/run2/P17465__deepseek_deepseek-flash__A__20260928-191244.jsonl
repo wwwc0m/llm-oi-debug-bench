@@ -1,1 +1,2 @@
 {"problem": "P17465", "model": "deepseek:deepseek-flash", "phase": "A", "start": "20260928-191244", "mutant": "overflow", "repeat": 0, "prior_used": 1}
+{"round": 0, "action": "compile", "code": null, "tool_result": {"ok": true, "errors": ""}, "usage": null, "t": "19:20:07"}

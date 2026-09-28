@@ -1,0 +1,7 @@
+{
+  "ok": true,
+  "all_ac": false,
+  "passed": 22,
+  "total": 80,
+  "detail": "TLE（通过测试点 22/80）（往返 48s）"
+}

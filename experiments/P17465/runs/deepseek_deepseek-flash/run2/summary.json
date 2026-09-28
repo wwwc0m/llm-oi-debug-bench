@@ -1,0 +1,16 @@
+{
+  "problem": "P17465",
+  "model": "deepseek:deepseek-flash",
+  "phase": "A",
+  "run": 2,
+  "final": {
+    "status": "error",
+    "detail": "Error code: 402 - {'error': {'message': 'Insufficient Balance (request_id: f8ed6fca-23b8-4c25-af5a-df313d65f684)', 'type': 'unknown_error', 'param': None, 'code': 'invalid_request_error'}}",
+    "rounds_used": 0
+  },
+  "usage": {
+    "prompt_tokens": 1394,
+    "completion_tokens": 90060
+  },
+  "submits": 0
+}
