@@ -24,6 +24,7 @@
 | 题目 | 模型 | 轮次 | 结局 | 提交 | tokens(p/c) | 时间 |
 |------|------|------|------|------|-------------|------|
 <!-- AUTO:RUNS -->
+| P5609 | deepseek:deepseek-flash | run1 | fixed | 1/5 | 680454/70455 | 2026-09-28 22:40 |
 | P7953 | deepseek:deepseek-flash | run1 | fixed | 1/5 | 55756/52236 | 2026-09-28 22:35 |
 | P7999 | deepseek:deepseek-flash | run1 | gave_up | 1/5 | 样例未过退回后弃（98万tokens全花在本地迭代上） | 2026-09-28 22:1x |
 | P7999 | deepseek:deepseek-flash | run1 | gave_up | 1/5 | 988888/85891 | 2026-09-28 22:15 |
