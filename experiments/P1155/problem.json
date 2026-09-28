@@ -1,0 +1,28 @@
+{
+  "id": "P1155",
+  "category": "classic",
+  "title": "[NOIP 2008 提高组] 双栈排序（洛谷 P1155）",
+  "difficulty": 6,
+  "statement": "",
+  "time_limit_ms": 1000,
+  "memory_limit_mb": 128,
+  "samples": [
+    {
+      "input": "4\n1 3 2 4",
+      "output": "a b a a b b a b"
+    },
+    {
+      "input": "4\n2 3 4 1",
+      "output": "0"
+    },
+    {
+      "input": "3\n2 3 1",
+      "output": "a c a b b d"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P1155",
+    "lang": "28"
+  }
+}

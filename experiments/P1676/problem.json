@@ -1,0 +1,56 @@
+{
+  "id": "P1676",
+  "category": "classic",
+  "title": "「CMOI R0」Parallel Universe Shifter / Lattices in Circle（洛谷 P1676）",
+  "difficulty": 8,
+  "statement": "",
+  "time_limit_ms": 4000,
+  "memory_limit_mb": 512,
+  "samples": [
+    {
+      "input": "1",
+      "output": "5"
+    },
+    {
+      "input": "2",
+      "output": "13"
+    },
+    {
+      "input": "5",
+      "output": "81"
+    },
+    {
+      "input": "19",
+      "output": "1129"
+    },
+    {
+      "input": "100",
+      "output": "31417"
+    },
+    {
+      "input": "30000",
+      "output": "2827432965"
+    },
+    {
+      "input": "10000000",
+      "output": "314159265350589"
+    },
+    {
+      "input": "500000000",
+      "output": "785398163397389961"
+    },
+    {
+      "input": "16000000000",
+      "output": "804247719318986163169"
+    },
+    {
+      "input": "700000000000",
+      "output": "1539380400258998682200449"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P1676",
+    "lang": "28"
+  }
+}

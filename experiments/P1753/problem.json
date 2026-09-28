@@ -1,0 +1,20 @@
+{
+  "id": "P1753",
+  "category": "classic",
+  "title": "矩阵链排序问题（洛谷 P1753）",
+  "difficulty": 8,
+  "statement": "",
+  "time_limit_ms": 1500,
+  "memory_limit_mb": 1024,
+  "samples": [
+    {
+      "input": "3\n5 3 2 6",
+      "output": "90"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P1753",
+    "lang": "28"
+  }
+}

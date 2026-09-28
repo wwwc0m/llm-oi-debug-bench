@@ -1,0 +1,20 @@
+{
+  "id": "P1232",
+  "category": "classic",
+  "title": "[NOI2013] 树的计数（洛谷 P1232）",
+  "difficulty": 7,
+  "statement": "",
+  "time_limit_ms": 1000,
+  "memory_limit_mb": 125,
+  "samples": [
+    {
+      "input": "5 \n1 2 4 5 3 \n1 2 3 4 5\n",
+      "output": "3.500\n"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P1232",
+    "lang": "28"
+  }
+}

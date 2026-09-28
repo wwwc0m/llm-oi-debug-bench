@@ -1,0 +1,20 @@
+{
+  "id": "P1756",
+  "category": "classic",
+  "title": "[NOI2009] 描边（洛谷 P1756）",
+  "difficulty": 8,
+  "statement": "",
+  "time_limit_ms": 1000,
+  "memory_limit_mb": 125,
+  "samples": [
+    {
+      "input": "2\n1 1\n1 2\n1\n1 2\n1\n0.00001 0.001 0.1 1\n",
+      "output": "5.1415927"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P1756",
+    "lang": "28"
+  }
+}

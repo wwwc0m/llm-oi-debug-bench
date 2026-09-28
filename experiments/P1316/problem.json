@@ -1,0 +1,28 @@
+{
+  "id": "P1316",
+  "category": "classic",
+  "title": "Mivik 写书（洛谷 P1316）",
+  "difficulty": 6,
+  "statement": "",
+  "time_limit_ms": 1000,
+  "memory_limit_mb": 128,
+  "samples": [
+    {
+      "input": "2 2",
+      "output": "500000006"
+    },
+    {
+      "input": "3 3",
+      "output": "5"
+    },
+    {
+      "input": "3 4",
+      "output": "250000007"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P1316",
+    "lang": "28"
+  }
+}

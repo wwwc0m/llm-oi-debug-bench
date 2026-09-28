@@ -1,0 +1,20 @@
+{
+  "id": "P1224",
+  "category": "classic",
+  "title": "[NOI2013] 向量内积（洛谷 P1224）",
+  "difficulty": 7,
+  "statement": "",
+  "time_limit_ms": 5000,
+  "memory_limit_mb": 256,
+  "samples": [
+    {
+      "input": "3 5 2 \n1 0 1 0 1 \n1 1 0 1 0 \n0 1 0 1 1\n",
+      "output": "2 3\n"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P1224",
+    "lang": "28"
+  }
+}

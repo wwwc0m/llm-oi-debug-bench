@@ -1,0 +1,20 @@
+{
+  "id": "P1251",
+  "category": "classic",
+  "title": "餐巾计划问题（洛谷 P1251）",
+  "difficulty": 7,
+  "statement": "",
+  "time_limit_ms": 4000,
+  "memory_limit_mb": 128,
+  "samples": [
+    {
+      "input": "3\n1 7 5 \n11 2 2 3 1\n",
+      "output": "134\n"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P1251",
+    "lang": "28"
+  }
+}
