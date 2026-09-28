@@ -95,6 +95,24 @@ class LuoguBrowser:
         print("[浏览器] 点击 提交答案 ...", flush=True)
         page.get_by_text("提交答案", exact=True).first.click(timeout=10000)
         page.wait_for_timeout(2500)
+        # 语言对齐：对话框语言按账号记忆，不可靠 —— 显式选择 C++17 并验证；
+        # 实测下拉选项为 C++98/11/14/17/20/23 与 "C++14 (GCC 9)" 等，无 "C++17 (GCC 9)"。
+        lang_ok = False
+        for attempt in range(3):
+            try:
+                # 当前语言框显示在 "复制" 附近，点开下拉
+                page.locator("div.lform-size-middle, .lfe-form-selected, "
+                             "[class*=select]").first.click(timeout=4000)
+                page.wait_for_timeout(1200)
+                page.get_by_text("C++17", exact=True).first.click(timeout=4000)
+                page.wait_for_timeout(800)
+                lang_ok = True
+                print("[浏览器] 语言已选择：C++17", flush=True)
+                break
+            except Exception as e:
+                print(f"[浏览器] 语言选择尝试 {attempt + 1} 失败：{str(e)[:60]}", flush=True)
+        if not lang_ok:
+            raise RuntimeError("无法选择 C++17 语言，中止提交以保护额度")
         # 填充代码：剪贴板 + Ctrl+A / Ctrl+V（CodeMirror 6）
         print("[浏览器] 写入剪贴板并填充编辑器 ...", flush=True)
         page.evaluate("c => navigator.clipboard.writeText(c)", code)

@@ -23,6 +23,7 @@
 | 题目 | 模型 | 轮次 | 结局 | 提交 | tokens(p/c) | 时间 |
 |------|------|------|------|------|-------------|------|
 <!-- AUTO:RUNS -->
+| P17304 | deepseek:deepseek-flash | run2 | fixed | 2/5 | 329882/125763 | 2026-09-28 20:35 |
 | P17344 | deepseek:deepseek-flash | run2 | fixed | 3/5 | 全站2人AC题3轮拿下：CE(bits缺失)→CE(iostream缺失)→AC 42/42；CE原文回传机制立功 | 2026-09-28 21:0x |
 | P17344 | deepseek:deepseek-flash | run2 | fixed | 3/5 | 486148/71982 | 2026-09-28 20:32 |
 | P17465 | deepseek:deepseek-flash | run3 | fixed(low档) | 4/5 | 完整阶梯：0→6→9→10/10，黑盒反馈驱动登顶（high档同题首提交满分） | 2026-09-28 19:45 |
