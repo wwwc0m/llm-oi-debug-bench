@@ -1,14 +1,15 @@
-"""洛谷后端（非官方接口，实验性）。
+"""洛谷后端。
 
-凭据（.env）：LUOGU_UID / LUOGU_CLIENT_ID
-—— 从浏览器登录洛谷后的 Cookie 中导出（F12 → Application → Cookies）。
+拉题：支持匿名（解析 SPA 页面内嵌 JSON）与带 Cookie（_contentOnly 直返 JSON）。
+提交/读结果：必须带登录 Cookie（LUOGU_UID / LUOGU_CLIENT_ID，浏览器导出）。
 
 注意事项：
-  * 非官方接口，有 _fd 反爬与登录校验；两次提交强制间隔 ≥60s 降低风控。
-  * status 码映射按社区文档 0f-0b/luogu-api-docs 编写，首次联调需实测校验。
-  * 优点：个人私有题目可上传，是自编 reskin/novel 题进入真实判题的唯一公开渠道。
+  * 提交走非官方接口，有风控；两次提交强制间隔 ≥60s。
+  * 记录 status 码映射按社区文档 0f-0b/luogu-api-docs 编写，联调时需实测校验。
 """
+import json
 import os
+import re
 import time
 
 import requests
@@ -32,37 +33,62 @@ class LuoguBackend(PlatformBackend):
     def __init__(self):
         self.sess = requests.Session()
         self.sess.headers["user-agent"] = UA
-        uid = os.environ.get("LUOGU_UID")
-        cid = os.environ.get("LUOGU_CLIENT_ID")
-        if not uid or not cid:
-            raise ValueError("请在 .env 配置 LUOGU_UID / LUOGU_CLIENT_ID（浏览器 Cookie 导出）")
-        self.sess.cookies.set("_uid", uid, domain=".luogu.com.cn")
-        self.sess.cookies.set("__client_id", cid, domain=".luogu.com.cn")
+        uid = os.environ.get("LUOGU_UID", "")
+        cid = os.environ.get("LUOGU_CLIENT_ID", "")
+        self.logged_in = bool(uid and cid)
+        if self.logged_in:
+            self.sess.cookies.set("_uid", uid, domain=".luogu.com.cn")
+            self.sess.cookies.set("__client_id", cid, domain=".luogu.com.cn")
 
     # ---------- 内部 ----------
 
-    def _content_only(self, path: str) -> dict:
+    def _get_data_json(self, path: str) -> dict:
+        """GET 页面；带 Cookie 时期望直返 JSON，匿名时解析内嵌 JSON。"""
         r = self.sess.get(BASE + path, params={"_contentOnly": "1"}, timeout=30)
         r.raise_for_status()
-        return r.json()
+        try:
+            return r.json()
+        except ValueError:
+            m = re.search(r"<script[^>]*>\s*(\{\"instance\".*?)</script>",
+                          r.text, re.S)
+            if not m:
+                raise RuntimeError("洛谷返回无法解析的页面（可能触发风控，稍后再试）")
+            return json.loads(m.group(1))
 
     # ---------- 接口实现 ----------
 
     def fetch_problem(self, ref: dict) -> dict:
         pid = ref["pid"]
-        data = self._content_only(f"/problem/{pid}")
-        detail = data.get("currentData", {}).get("problem", {})
-        statement_html = detail.get("background", "") + detail.get("content", "")
-        samples = []
-        for s in detail.get("samples", []):
-            samples.append({"input": s[0], "output": s[1]})
-        limits = detail.get("limits") or {}
-        return {"statement_html": statement_html or f"<p>洛谷题目 {pid}</p>",
+        j = self._get_data_json(f"/problem/{pid}")
+        prob = j.get("currentData", {}).get("problem") or \
+            j.get("data", {}).get("problem")
+        if not prob:
+            raise RuntimeError(f"未取到题目 {pid} 数据：{list(j.keys())}")
+
+        content = prob.get("content") or {}
+        parts = [content.get(k) for k in
+                 ("background", "description", "formatI", "formatO", "hint")
+                 if content.get(k)]
+        statement_md = f"# {prob.get('name', pid)}\n\n" + "\n\n".join(parts)
+
+        samples = [{"input": s[0], "output": s[1]}
+                   for s in prob.get("samples", [])]
+
+        limits = prob.get("limits") or {}
+        tl = max(limits["time"]) if limits.get("time") else None
+        ml_kb = max(limits["memory"]) if limits.get("memory") else None
+        n_points = len(limits.get("time") or [])
+
+        return {"statement_md": statement_md,
                 "samples": samples,
-                "time_limit_ms": limits.get("time"),
-                "memory_limit_mb": limits.get("memory")}
+                "time_limit_ms": tl,
+                "memory_limit_mb": round(ml_kb / 1024) if ml_kb else None,
+                "test_point_count": n_points,
+                "accept_languages": prob.get("acceptLanguages")}
 
     def submit(self, code: str, lang_name: str, ref: dict) -> str:
+        if not self.logged_in:
+            raise ValueError("提交需要登录：请在 .env 配置 LUOGU_UID / LUOGU_CLIENT_ID")
         # 限速：保护账号
         wait = MIN_SUBMIT_INTERVAL_S - (time.time() - _LAST_SUBMIT[0])
         if wait > 0:
@@ -88,8 +114,8 @@ class LuoguBackend(PlatformBackend):
     def wait_result(self, rid: str, ref: dict, timeout_s: int = 600) -> dict:
         deadline = time.time() + timeout_s
         while time.time() < deadline:
-            data = self._content_only(f"/record/{rid}")
-            rec = data.get("currentRecord", {})
+            data = self._get_data_json(f"/record/{rid}")
+            rec = (data.get("currentData") or {}).get("record") or {}
             status = rec.get("status")
             if status in (0, 1):  # 排队/评测中
                 time.sleep(5)

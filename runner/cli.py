@@ -42,15 +42,11 @@ def cmd_fetch(args):
     }
     with open(os.path.join(out_dir, "problem.json"), "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False, indent=2)
-    text = _html_to_text(fetched["statement_html"])
-    with open(os.path.join(out_dir, "statement.txt"), "w", encoding="utf-8") as f:
-        f.write(text)
-    print(f"已创建 problems/{args.id}/（题面 {len(text)} 字，样例 {len(fetched['samples'])} 组）")
-
-
-def _html_to_text(html: str) -> str:
-    from bs4 import BeautifulSoup
-    return BeautifulSoup(html, "html.parser").get_text("\n", strip=True)
+    md = fetched["statement_md"]
+    with open(os.path.join(out_dir, "statement.md"), "w", encoding="utf-8") as f:
+        f.write(md)
+    print(f"已创建 problems/{args.id}/（题面 {len(md)} 字，样例 {len(fetched['samples'])} 组，"
+          f"测试点 {fetched.get('test_point_count')} 个）")
 
 
 def cmd_models(args):

@@ -10,8 +10,6 @@ import shutil
 import tempfile
 import time
 
-from bs4 import BeautifulSoup
-
 from . import sandbox
 from .platforms.luogu import LuoguBackend
 
@@ -42,10 +40,10 @@ class LuoguJudge:
         with open(cache_path, "w", encoding="utf-8") as f:
             json.dump(fetched, f, ensure_ascii=False, indent=1)
         self.p.samples = fetched["samples"]
-        text = BeautifulSoup(fetched["statement_html"], "html.parser").get_text("\n", strip=True)
-        with open(os.path.join(self.p.dir, "statement.txt"), "w", encoding="utf-8") as f:
-            f.write(text)
-        self.p.statement = self.p.statement or text[:6000]
+        md = fetched["statement_md"]
+        with open(os.path.join(self.p.dir, "statement.md"), "w", encoding="utf-8") as f:
+            f.write(md)
+        self.p.statement = self.p.statement or md[:6000]
 
     # ---------- 三工具 ----------
 

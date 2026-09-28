@@ -29,7 +29,7 @@ class MockLuoguBackend(PlatformBackend):
         self.rid = 0
 
     def fetch_problem(self, ref):
-        return {"statement_html": "<p>求逆序对数量。</p>",
+        return {"statement_md": "# 求逆序对数量\n\n给定序列求逆序对。",
                 "samples": [{"input": "3\n3 1 2\n", "output": "2\n"}],
                 "time_limit_ms": 1000, "memory_limit_mb": 128}
 
@@ -88,7 +88,7 @@ def main():
 
     assert len(p.samples) == 1, "样例应已从 Mock 后端拉取"
     assert os.path.exists(os.path.join(tmp, "platform_cache.json"))
-    assert os.path.exists(os.path.join(tmp, "statement.txt"))
+    assert os.path.exists(os.path.join(tmp, "statement.md"))
 
     prob_dir = os.path.join(root, "problems", "classic-inv-pairs")
     with open(os.path.join(prob_dir, "solution.cpp"), encoding="utf-8") as f:
