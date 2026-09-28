@@ -21,7 +21,7 @@ _PT_RE = re.compile(r"(\d+(?:\.\d+)?m?s/[0-9.]+[KMG]B)\s*(AC|WA|TLE|MLE|RE|UKE)\
 _RECORD_RE = re.compile(r"/record/(\d+)")
 _LOCK_PATH = os.path.join(tempfile.gettempdir(), "bench_submit.lock")
 _TS_PATH = os.path.join(tempfile.gettempdir(), "bench_submit_last.ts")
-MIN_SUBMIT_GAP_S = 120  # 账号级最短提交间隔（防风控）
+MIN_SUBMIT_GAP_S = 60   # 账号级最短提交间隔（防风控）
 
 
 def _acquire_submit_lock(timeout_s: int = 360):
