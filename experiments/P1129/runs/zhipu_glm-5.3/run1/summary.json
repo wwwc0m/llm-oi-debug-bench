@@ -1,0 +1,15 @@
+{
+  "problem": "P1129",
+  "model": "zhipu:glm-5.3",
+  "phase": "A",
+  "run": 1,
+  "final": {
+    "status": "fixed",
+    "rounds_used": 1
+  },
+  "usage": {
+    "prompt_tokens": 4805,
+    "completion_tokens": 1959
+  },
+  "submits": 1
+}

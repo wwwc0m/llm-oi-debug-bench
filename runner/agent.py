@@ -52,12 +52,19 @@ def _fmt_submit(res: dict) -> str:
     return "\n".join(lines)
 
 
+def _msg_role(m) -> str | None:
+    """消息可能是 dict，也可能是 SDK 返回的 ChatCompletionMessage 对象。"""
+    if isinstance(m, dict):
+        return m.get("role")
+    return getattr(m, "role", None)
+
+
 def _truncate(messages):
     """保留 system+user 前缀与最近消息；截断点必须落在 tool 回复序列之外，
     否则 tool 消息与对应的 tool_calls 断开会导致 API 报错。"""
     tail = messages[-KEEP_LAST_MSGS:]
     cut = 0
-    while cut < len(tail) and tail[cut].get("role") == "tool":
+    while cut < len(tail) and _msg_role(tail[cut]) == "tool":
         cut += 1
     return messages[:2] + tail[cut:]
 

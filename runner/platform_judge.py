@@ -109,8 +109,18 @@ class LuoguJudge:
         t0 = time.time()
         try:
             rid = self.browser.submit(code, self.lang, self.p.source)
-        except Exception as e:  # 网络/风控问题不应崩实验
-            return {"ok": False, "errors": f"洛谷提交失败：{e}"}
+        except Exception as e:
+            # 浏览器被关闭（用户关窗/崩溃）时自愈：重启浏览器重试一次
+            if "has been closed" in str(e) or "closed" in str(e).lower():
+                print("[judge] 浏览器已关闭，自动重启后重试提交 ...", flush=True)
+                try:
+                    self.browser.close()
+                except Exception:
+                    pass
+                self.browser = LuoguBrowser()
+                rid = self.browser.submit(code, self.lang, self.p.source)
+            else:
+                return {"ok": False, "errors": f"洛谷提交失败：{e}"}
         result = self.browser.wait_result(rid, self.p.source)
         passed, total = result.get("passed"), result.get("total")
         return {
