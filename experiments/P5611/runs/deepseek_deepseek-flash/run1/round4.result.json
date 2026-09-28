@@ -1,0 +1,7 @@
+{
+  "ok": true,
+  "all_ac": false,
+  "passed": 10,
+  "total": 45,
+  "detail": "PARTIAL（通过测试点 10/45）（往返 16s）"
+}

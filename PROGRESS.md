@@ -24,6 +24,9 @@
 | 题目 | 模型 | 轮次 | 结局 | 提交 | tokens(p/c) | 时间 |
 |------|------|------|------|------|-------------|------|
 <!-- AUTO:RUNS -->
+| P5611 | deepseek:deepseek-flash | run1 | exhausted | 5/5 | 0→10→2→10→15/45 锯齿爬升未破1/3，深伤标本 | 2026-09-28 21:12 |
+| P5617 | deepseek:deepseek-flash | run1 | fixed | 1/5 | 751712/69906 | 2026-09-28 21:12 |
+| P5611 | deepseek:deepseek-flash | run1 | exhausted | 5/5 | 1177417/134354 | 2026-09-28 21:10 |
 | P5655 | deepseek:deepseek-flash | run1 | exhausted | 5/5 | 6/10 原地五连（深伤死平台），第3轮 pragma CE 后回到同分 | 2026-09-28 22:1x |
 | P5655 | deepseek:deepseek-flash | run1 | exhausted | 5/5 | 1782058/157775 | 2026-09-28 21:04 |
 | P5612 | deepseek:deepseek-flash | run1 | exhausted | 5/5 | 6→7→9→11→11/20 爬升后平台，深伤典型 | 2026-09-28 22:0x |
