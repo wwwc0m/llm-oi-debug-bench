@@ -1,0 +1,7 @@
+{
+  "ok": true,
+  "all_ac": false,
+  "passed": null,
+  "total": null,
+  "detail": "CE 编译器输出：编译失败 | /tmp/compiler_lde01opr/src:1:10: 致命错误：bits/stdc++.h：No such file or directory |     1 | #include <bits/stdc++.h> |       |          ^~~~~~~~~~~~~~~ | 编译中断。 |  |  | 关于洛谷 · 帮助中心 · 用户协议 · 联系我们 · 小黑屋 · 陶片放逐 · 社区规则 |  | 在洛谷，享受 Coding 的欢乐 · © 2013-2026 洛谷. All rights reserved. | 增值电信业务经营许可证 沪B2-20200477 · 沪ICP备18008322号（往返 56s）"
+}
