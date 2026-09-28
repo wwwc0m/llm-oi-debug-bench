@@ -45,5 +45,6 @@ def make_client(model_spec: str):
     api_key = os.environ.get(env)
     if not api_key:
         raise ValueError(f"环境变量 {env} 未设置（检查 .env）")
-    client = OpenAI(api_key=api_key, base_url=base_url)
+    client = OpenAI(api_key=api_key, base_url=base_url,
+                    timeout=420, max_retries=1)  # 单次调用 7 分钟上限，失败重试 1 次
     return client, model or default

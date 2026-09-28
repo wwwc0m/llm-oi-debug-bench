@@ -124,7 +124,7 @@ class AgentRunner:
                 resp = self.client.chat.completions.create(
                     model=self.model, messages=messages,
                     tools=_tools_schema(), temperature=0.7,
-                    timeout=420, max_retries=1,  # 推理模型可能慢，但 7 分钟必须返回
+                    timeout=420,  # 推理模型可能慢，但 7 分钟必须返回
                 )
             except Exception as e:
                 print(f"[agent] API 调用失败：{str(e)[:150]}", flush=True)
