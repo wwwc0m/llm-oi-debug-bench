@@ -11,8 +11,10 @@ SYSTEM_PROMPT = """你是一名参加 OI（信息学奥赛）式比赛的选手�
 1. 题目用 C++17 解决，判题机编译命令为 g++ -O2 -std=c++17。
 2. 你可以用工具：compile（编译并看报错）、run_sample（在题面样例上自测）、submit（正式提交）。
 3. submit 的反馈是黑盒的：只知道每个测试点通过与否，未通过的标注 WA/TLE/MLE/RE，看不到测试点内容。
-4. 正式提交最多 {K} 次，用完即止。请先本地自测有把握再提交。
-5. 每次修改代码后，把完整的当前代码传给工具（工具会自动复用编译缓存）。""".strip()
+4. 正式提交最多 {K} 次，用完即止。
+5. 每次修改代码后，把完整的当前代码传给工具（工具会自动复用编译缓存）。
+6. submit 前系统会在本地先编译并运行题面样例：不通过会被退回并附错误信息；
+   退回不计入提交次数，修复后重新提交即可。""".strip()
 
 PHASE_B_EXTRA = """场上已有一份能编译但判定不完全正确的代码（见用户消息末尾）。
 你的任务：调试并修复它。允许小修，也允许重写。"""
@@ -129,18 +131,24 @@ class AgentRunner:
                     elif name == "run_sample":
                         result = self.judge.run_sample(code)
                     elif name == "submit":
-                        submits += 1
                         result = self.judge.submit(code)
                         if result.get("ok"):
-                            # 模型只看黑盒摘要，不看原始明细
+                            # 只有真正到达评测平台的提交才计数/落盘
+                            submits += 1
                             view = {k: result[k] for k in ("ok", "all_ac", "passed", "total")
                                     if k in result}
                             view["detail"] = result.get("detail") or _fmt_submit(result)
                             result = view
-                        self._save_round(submits, code, result)
+                            self._save_round(submits, code, result)
+                            session.log_round(step, name, code, result, None)
+                        elif result.get("local_gate"):
+                            # 本地预检退回（编译错/样例未过）：记录进轨迹，不计次、不占 round 编号
+                            session.log_round(step, f"local_gate:{result['local_gate']}",
+                                              code,
+                                              {"errors": (result.get("errors") or "")[:2000]},
+                                              None)
                     else:
                         result = {"ok": False, "errors": f"未知工具 {name}"}
-                    session.log_round(step, name, code, result, None)
                     messages.append({"role": "tool", "tool_call_id": tc.id,
                                      "content": json.dumps(result, ensure_ascii=False)[:6000]})
                     if name == "submit" and result.get("all_ac"):

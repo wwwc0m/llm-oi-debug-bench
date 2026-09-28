@@ -63,6 +63,9 @@ class LuoguJudge:
         exe, err = self._get_exe(code)
         if exe is None:
             return {"ok": False, "errors": err}
+        return {"ok": True, "runs": self._run_samples(exe)}
+
+    def _run_samples(self, exe) -> list:
         runs = []
         for i, s in enumerate(self.p.samples):
             r = sandbox.run_case(exe, s["input"], LOCAL_TL_MS, LOCAL_ML_MB)
@@ -78,9 +81,29 @@ class LuoguJudge:
                 "verdict": verdict,
                 "note": "本地自测，正式时限以洛谷为准",
             })
-        return {"ok": True, "runs": runs}
+        return runs
 
     def submit(self, code: str) -> dict:
+        # —— 本地预检门：编译（未过即退回，不计入提交次数）——
+        exe, err = self._get_exe(code)
+        if exe is None:
+            return {"ok": False, "local_gate": "compile",
+                    "errors": f"提交被退回：代码在本地编译失败。\n{err}",
+                    "hint": "修复编译错误后重新提交（不计入提交次数）。"}
+        # —— 本地预检门：题面样例必须全过 ——
+        bad = [r for r in self._run_samples(exe) if r["verdict"] != "AC"]
+        if bad:
+            b = bad[0]
+            return {"ok": False, "local_gate": "samples",
+                    "errors": (f"提交被退回：样例 {b['sample']} 本地未通过"
+                               f"（{b['verdict']}）。\n"
+                               f"样例输入：\n{b['input']}\n"
+                               f"期望输出：\n{b['expected']}\n"
+                               f"你的输出：\n{b['your_output']}"),
+                    "hint": "请修复后重新提交（不计入提交次数）。"
+                            "注意：正式评测的隐藏测试点比样例更严。"}
+
+        # —— 预检通过，正式提交洛谷 ——
         t0 = time.time()
         try:
             rid = self.browser.submit(code, self.lang, self.p.source)

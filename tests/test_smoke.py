@@ -1,8 +1,8 @@
 """冒烟测试：不需要 API key / Cookie，Mock 后端 + Mock LLM 跑通全链路。
 
 运行：python tests/test_smoke.py
-覆盖：题目加载（洛谷 source）→ LuoguJudge 样例缓存 → agent 工具循环 →
-浏览器提交/逐测试点反馈格式 → 每轮代码与结果落盘。
+覆盖：题目加载 → 样例缓存 → 本地预检门（编译/样例退回不计次）→
+浏览器提交/逐测试点反馈 → 每轮代码与结果落盘（只记真实提交）。
 """
 import json
 import os
@@ -19,13 +19,18 @@ from runner.platforms.base import PlatformBackend
 from runner.problem import Problem
 from runner.session import Session
 
+BAD_COMPILE = """#include <bits/stdc++.h>
+int main() { this is not valid c++ ; }
+"""
+
 
 class MockFetcher(PlatformBackend):
     name = "mock"
 
     def fetch_problem(self, ref):
+        # 样例含相等元素：boundary 变体（相等计逆序对）在本地样例即翻车
         return {"statement_md": "# 求逆序对数量\n\n给定序列求逆序对。",
-                "samples": [{"input": "3\n3 1 2\n", "output": "2\n"}],
+                "samples": [{"input": "3\n5 5 2\n", "output": "2\n"}],
                 "time_limit_ms": 1000, "memory_limit_mb": 128}
 
     def submit(self, code, lang_name, ref):
@@ -36,19 +41,12 @@ class MockFetcher(PlatformBackend):
 
 
 class MockBrowser:
-    """第一次提交 WA（部分点），第二次 AC。"""
-
-    def __init__(self):
-        self.n = 0
+    """到达浏览器的提交都已过本地预检门，直接返回 AC。"""
 
     def submit(self, code, lang, ref):
-        self.n += 1
-        return str(self.n)
+        return "1"
 
     def wait_result(self, rid, ref, timeout_s=300):
-        if rid == "1":
-            return {"verdict": "WA", "passed": 4, "total": 20,
-                    "detail": "WA（通过测试点 4/20）", "points": []}
         return {"verdict": "AC", "passed": 20, "total": 20,
                 "detail": "AC（通过测试点 20/20）", "points": []}
 
@@ -56,16 +54,17 @@ class MockBrowser:
         pass
 
 
-def _make_llm_client(bad_code, good_code):
+def _make_llm_client(codes):
+    """按给定代码序列依次返回 submit 工具调用。"""
     calls = [0]
 
     def create(**kw):
+        i = min(calls[0], len(codes) - 1)
         calls[0] += 1
-        code = bad_code if calls[0] == 1 else good_code
         tc = SimpleNamespace(
             id=f"call_{calls[0]}",
             function=SimpleNamespace(name="submit",
-                                     arguments=json.dumps({"code": code})),
+                                     arguments=json.dumps({"code": codes[i]})),
         )
         msg = SimpleNamespace(tool_calls=[tc], content=None)
         return SimpleNamespace(choices=[SimpleNamespace(message=msg)],
@@ -107,30 +106,35 @@ def main():
     with open(os.path.join(prob, "solution.cpp"), encoding="utf-8") as f:
         good = f.read()
     with open(os.path.join(prob, "mutants", "boundary.cpp"), encoding="utf-8") as f:
-        bad = f.read()
+        boundary = f.read()
 
-    client, calls = _make_llm_client(bad, good)
+    # 场景：①语法错误→编译门退回 ②boundary→样例门退回 ③正解→过门提交 AC
+    client, calls = _make_llm_client([BAD_COMPILE, boundary, good])
     sess = Session(out_dir, p.id, "mock:model", "A")
     runner = AgentRunner(j, client, "mock-model", phase="A", out_dir=out_dir)
     final, usage, submits = runner.run(sess)
     j.cleanup()
 
     print("final =", final, "| submits =", submits)
-    assert final["status"] == "fixed" and submits == 2 and calls[0] == 2
+    assert final["status"] == "fixed", final
+    assert submits == 1, f"只有正解真正提交，应计 1 次，实际 {submits}"
+    assert calls[0] == 3
 
-    # 每轮代码与结果落盘
-    assert os.path.exists(os.path.join(out_dir, "round1.cpp"))
+    # 落盘：只有真实提交才有 round 文件，且 round1 = 正解
+    assert not os.path.exists(os.path.join(out_dir, "round2.cpp")), "退回不应占 round 编号"
+    r1_code = open(os.path.join(out_dir, "round1.cpp"), encoding="utf-8").read()
+    assert r1_code == good
     r1 = json.load(open(os.path.join(out_dir, "round1.result.json"), encoding="utf-8"))
-    assert not r1["all_ac"] and "WA" in r1["detail"], r1
-    r2 = json.load(open(os.path.join(out_dir, "round2.result.json"), encoding="utf-8"))
-    assert r2["all_ac"] and "20/20" in r2["detail"], r2
+    assert r1["all_ac"] and "20/20" in r1["detail"], r1
 
+    # 轨迹：2 条本地门退回 + 1 条真实提交，都被记录
     with open(sess.file, encoding="utf-8") as f:
         rounds = [json.loads(ln) for ln in f if ln.strip() and '"round"' in ln]
-    assert len(rounds) == 2
+    actions = [r["action"] for r in rounds]
+    assert actions == ["local_gate:compile", "local_gate:samples", "submit"], actions
 
     shutil.rmtree(tmp, ignore_errors=True)
-    print("冒烟测试通过 ✓")
+    print("冒烟测试通过 ✓（编译错/样例退回均记录且不计次）")
 
 
 if __name__ == "__main__":
