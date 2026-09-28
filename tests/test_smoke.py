@@ -133,7 +133,7 @@ def main():
 
     good, boundary = GOOD_CODE, BOUNDARY_CODE
 
-    # 场景：①语法错误→编译门退回 ②boundary→样例门退回 ③正解→过门提交 AC
+    # 场景：①语法错误→编译门退回（不计次）②boundary→样例门退回（计次！协议v2）③正解→过门提交 AC
     client, calls = _make_llm_client([BAD_COMPILE, boundary, good])
     sess = Session(out_dir, p.id, "mock:model", "A")
     runner = AgentRunner(j, client, "mock-model", phase="A", out_dir=out_dir)
@@ -142,24 +142,27 @@ def main():
 
     print("final =", final, "| submits =", submits)
     assert final["status"] == "fixed", final
-    assert submits == 1, f"只有正解真正提交，应计 1 次，实际 {submits}"
+    assert submits == 2, f"样例退回应计次：1(退回)+1(AC)=2，实际 {submits}"
     assert calls[0] == 3
 
-    # 落盘：只有真实提交才有 round 文件，且 round1 = 正解
-    assert not os.path.exists(os.path.join(out_dir, "round2.cpp")), "退回不应占 round 编号"
+    # 落盘：样例退回占 round1（含样例数据），正解是 round2
     r1_code = open(os.path.join(out_dir, "round1.cpp"), encoding="utf-8").read()
-    assert r1_code == good
+    assert r1_code == boundary, "样例退回应作为 round1 记录"
     r1 = json.load(open(os.path.join(out_dir, "round1.result.json"), encoding="utf-8"))
-    assert r1["all_ac"] and "20/20" in r1["detail"], r1
+    assert r1.get("local_gate") == "samples" and "样例" in r1.get("errors", ""), r1
+    r2_code = open(os.path.join(out_dir, "round2.cpp"), encoding="utf-8").read()
+    assert r2_code == good
+    r2 = json.load(open(os.path.join(out_dir, "round2.result.json"), encoding="utf-8"))
+    assert r2["all_ac"] and "20/20" in r2["detail"], r2
 
-    # 轨迹：2 条本地门退回 + 1 条真实提交，都被记录
+    # 轨迹：编译退回（不计次）+ 样例退回（计次）+ 真实提交
     with open(sess.file, encoding="utf-8") as f:
         rounds = [json.loads(ln) for ln in f if ln.strip() and '"round"' in ln]
     actions = [r["action"] for r in rounds]
     assert actions == ["local_gate:compile", "local_gate:samples", "submit"], actions
 
     shutil.rmtree(tmp, ignore_errors=True)
-    print("冒烟测试通过 ✓（编译错/样例退回均记录且不计次）")
+    print("冒烟测试通过 ✓（样例退回计次+样例数据落盘）")
 
 
 if __name__ == "__main__":
