@@ -11,13 +11,43 @@ import json
 import os
 import re
 import sys
+import time
 
-from .agent import AgentRunner
+from .agent import AgentRunner, MAX_SUBMITS
 from .platform_judge import LuoguJudge
 from .problem import Problem
 from .session import Session
 
 EXP_ROOT = "experiments"
+
+
+def _update_progress(problem: str, model: str, run_no: int, final: dict,
+                     submits: int, usage: dict):
+    """每次实验结束后更新 PROGRESS.md 的自动区（同一 题×模型×轮次 重跑则覆盖该行）。"""
+    path = "PROGRESS.md"
+    new_line = (f"| {problem} | {model} | run{run_no} | {final.get('status', '?')} | "
+                f"{submits}/{MAX_SUBMITS} | "
+                f"{usage.get('prompt_tokens', '?')}/{usage.get('completion_tokens', '?')} | "
+                f"{time.strftime('%Y-%m-%d %H:%M')} |\n")
+    key = f"| {problem} | {model} | run{run_no} |"
+    lines = open(path, encoding="utf-8").readlines() if os.path.exists(path) else []
+    out, replaced = [], False
+    for ln in lines:
+        if ln.startswith(key):
+            out.append(new_line)
+            replaced = True
+        else:
+            out.append(ln)
+    if not replaced:
+        for i, ln in enumerate(out):
+            if ln.startswith("<!-- AUTO:RUNS -->"):
+                out.insert(i + 1, new_line)
+                replaced = True
+                break
+        if not replaced:
+            out.append("<!-- AUTO:RUNS -->\n" + new_line)
+    with open(path, "w", encoding="utf-8") as f:
+        f.writelines(out)
 
 
 def _load_problem(path) -> Problem:
@@ -109,6 +139,7 @@ def _run_one(problem_id: str, model_spec: str, phase: str, mutant: str,
                "usage": usage, "submits": submits}
     with open(os.path.join(out_dir, "summary.json"), "w", encoding="utf-8") as f:
         json.dump(summary, f, ensure_ascii=False, indent=2)
+    _update_progress(p.id, model_spec, max(ks, default=0) + 1, final, submits, usage)
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     return summary
 
