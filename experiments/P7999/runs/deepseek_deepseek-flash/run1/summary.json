@@ -1,0 +1,15 @@
+{
+  "problem": "P7999",
+  "model": "deepseek:deepseek-flash",
+  "phase": "A",
+  "run": 1,
+  "final": {
+    "status": "gave_up",
+    "rounds_used": 1
+  },
+  "usage": {
+    "prompt_tokens": 379535,
+    "completion_tokens": 140515
+  },
+  "submits": 1
+}

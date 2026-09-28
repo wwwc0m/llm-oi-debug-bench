@@ -24,10 +24,13 @@
 | 题目 | 模型 | 轮次 | 结局 | 提交 | tokens(p/c) | 时间 |
 |------|------|------|------|------|-------------|------|
 <!-- AUTO:RUNS -->
+| P7922 | deepseek:deepseek-flash | run1 | gave_up | 3/5 | 11/42 三连死平台（B类第8例） | 2026-09-28 22:4x |
+| P7999 | deepseek:deepseek-flash | run2 | gave_up | 2/5 | 19/30 部分分后弃（2次额度未用） | 2026-09-28 22:4x |
+| P7922 | deepseek:deepseek-flash | run1 | gave_up | 3/5 | 891525/113345 | 2026-09-28 22:43 |
 | P5609 | deepseek:deepseek-flash | run1 | fixed | 1/5 | 680454/70455 | 2026-09-28 22:40 |
 | P7953 | deepseek:deepseek-flash | run1 | fixed | 1/5 | 55756/52236 | 2026-09-28 22:35 |
-| P7999 | deepseek:deepseek-flash | run1 | gave_up | 1/5 | 样例未过退回后弃（98万tokens全花在本地迭代上） | 2026-09-28 22:1x |
-| P7999 | deepseek:deepseek-flash | run1 | gave_up | 1/5 | 988888/85891 | 2026-09-28 22:15 |
+| P7999 | deepseek:deepseek-flash | run1 | gave_up | 1/5 | 379535/140515 | 2026-09-28 22:43 |
+| P7999 | deepseek:deepseek-flash | run1 | gave_up | 1/5 | 379535/140515 | 2026-09-28 22:43 |
 | P5659 | deepseek:deepseek-flash | run1 | fixed | 1/5 | 180468/50180 | 2026-09-28 21:53 |
 | P5643 | deepseek:deepseek-flash | run1 | fixed | 1/5 | 10192/9106 | 2026-09-28 21:51 |
 | P5649 | deepseek:deepseek-flash | run1 | gave_up | 3/5 | 0/10三连后弃（LCT实现完全错，2次额度未用），B类第6例 | 2026-09-28 21:3x |
