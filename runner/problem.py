@@ -11,7 +11,12 @@ class Problem:
         self.id = meta["id"]
         self.category = meta.get("category", "classic")
         self.title = meta["title"]
-        self.statement = meta.get("statement", "")
+        self.statement = meta.get("statement") or ""
+        if not self.statement:  # 题面缓存在 statement.md（fetch 产物）
+            md = os.path.join(self.dir, "statement.md")
+            if os.path.exists(md):
+                with open(md, encoding="utf-8") as f:
+                    self.statement = f.read()
         self.time_limit_ms = meta.get("time_limit_ms")
         self.memory_limit_mb = meta.get("memory_limit_mb")
         self.samples = meta.get("samples") or []

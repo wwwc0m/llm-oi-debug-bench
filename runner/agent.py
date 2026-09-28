@@ -69,15 +69,18 @@ def _truncate(messages):
     return messages[:2] + tail[cut:]
 
 
-def _stream_create(client, model: str, messages: list, tools: list):
+def _stream_create(client, model: str, messages: list, tools: list,
+                   extra: dict | None = None):
     """流式请求：推理模型思考期间 token 持续流动，连接不会空闲超时。
 
+    extra：透传给 create 的额外参数（如 reasoning_effort、thinking 开关）。
     返回与同步接口同形的对象（choices[0].message / usage）；
     message 为 SimpleNamespace（tool_calls 元素也是），供本模块消费。
     测试用的 Mock 客户端可能返回非流式对象，直接透传。"""
     stream = client.chat.completions.create(
         model=model, messages=messages, tools=tools,
-        temperature=0.7, stream=True, timeout=180)
+        temperature=0.7, stream=True, timeout=180,
+        **(extra or {}))
     if not hasattr(stream, "__iter__"):  # Mock 透传
         return stream
 
