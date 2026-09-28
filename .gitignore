@@ -17,3 +17,6 @@ venv/
 .vscode/
 .DS_Store
 Thumbs.db
+
+# 实验产物
+results/
