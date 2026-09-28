@@ -1,0 +1,16 @@
+{
+  "problem": "P15860",
+  "model": "deepseek:deepseek-flash",
+  "phase": "A",
+  "run": 1,
+  "final": {
+    "status": "error",
+    "detail": "连续空响应（思考超限）",
+    "rounds_used": 0
+  },
+  "usage": {
+    "prompt_tokens": 3468,
+    "completion_tokens": 196609
+  },
+  "submits": 0
+}
