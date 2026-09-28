@@ -1,0 +1,19 @@
+{
+  "id": "P1803",
+  "category": "classic",
+  "title": "洛谷 P1803",
+  "statement": "",
+  "time_limit_ms": 3000,
+  "memory_limit_mb": 512,
+  "samples": [
+    {
+      "input": "3\n0 2\n2 4\n1 3\n",
+      "output": "2\n"
+    }
+  ],
+  "source": {
+    "platform": "luogu",
+    "pid": "P1803",
+    "lang": "28"
+  }
+}
