@@ -60,13 +60,13 @@ def _msg_role(m) -> str | None:
 
 
 def _truncate(messages):
-    """保留 system+user 前缀与最近消息；截断点必须落在 tool 回复序列之外，
+    """保留 system+题面+提交历史 前缀与最近消息；截断点必须落在 tool 回复序列之外，
     否则 tool 消息与对应的 tool_calls 断开会导致 API 报错。"""
     tail = messages[-KEEP_LAST_MSGS:]
     cut = 0
     while cut < len(tail) and _msg_role(tail[cut]) == "tool":
         cut += 1
-    return messages[:2] + tail[cut:]
+    return messages[:3] + tail[cut:]
 
 
 def _stream_create(client, model: str, messages: list, tools: list,
@@ -146,6 +146,13 @@ class AgentRunner:
         self.starter_code = starter_code
         self.out_dir = out_dir  # 每轮 round<N>.cpp / round<N>.result.json 落盘目录
 
+    def _remember_round(self, n: int, code: str, detail: str, messages: list):
+        """把每次提交的代码与判定写入固定位置的【提交历史】消息，长对话截断不丢失。"""
+        self._rounds_log.append(f"### 第 {n} 次提交 → {detail}\n```cpp\n{code}\n```")
+        messages[2]["content"] = (
+            "【提交历史】此前每次提交的完整代码与判定（供对比分析，早期上下文可能已被"
+            "截断，以此为准）：\n\n" + "\n\n".join(self._rounds_log))
+
     def _save_round(self, n: int, code: str, result: dict):
         if not self.out_dir:
             return
@@ -179,7 +186,10 @@ class AgentRunner:
         messages = [
             {"role": "system", "content": sys_content},
             {"role": "user", "content": user_prompt},
+            # 提交历史：位置固定、每轮更新，长对话截断时永不丢失（含全部历史代码）
+            {"role": "user", "content": "【提交历史】（尚无提交）"},
         ]
+        self._rounds_log = []
 
         submits, usage_total = 0, {"prompt_tokens": 0, "completion_tokens": 0}
         final = {"status": "no_submit", "rounds_used": 0}
@@ -228,6 +238,7 @@ class AgentRunner:
                             result = view
                             self._save_round(submits, code, result)
                             session.log_round(step, name, code, result, None)
+                            self._remember_round(submits, code, view.get("detail", ""), messages)
                         elif result.get("local_gate") == "samples":
                             # 样例未过的提交：计入提交次数（协议 v2），并落盘记录样例数据
                             submits += 1
@@ -236,6 +247,9 @@ class AgentRunner:
                             self._save_round(submits, code, result)
                             session.log_round(step, "local_gate:samples", code,
                                               {"errors": (result.get("errors") or "")[:2000]}, None)
+                            self._remember_round(submits, code,
+                                                 "样例未过被退回：" +
+                                                 (result.get("errors") or "")[:300], messages)
                         elif result.get("local_gate") == "compile":
                             # 编译失败退回：不计次（协议 v2 沿用）
                             session.log_round(step, "local_gate:compile", code,
