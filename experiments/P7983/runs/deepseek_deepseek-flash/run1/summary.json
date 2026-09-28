@@ -1,0 +1,15 @@
+{
+  "problem": "P7983",
+  "model": "deepseek:deepseek-flash",
+  "phase": "A",
+  "run": 1,
+  "final": {
+    "status": "exhausted",
+    "rounds_used": 5
+  },
+  "usage": {
+    "prompt_tokens": 849646,
+    "completion_tokens": 101075
+  },
+  "submits": 5
+}

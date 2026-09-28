@@ -24,6 +24,8 @@
 | 题目 | 模型 | 轮次 | 结局 | 提交 | tokens(p/c) | 时间 |
 |------|------|------|------|------|-------------|------|
 <!-- AUTO:RUNS -->
+| P7983 | deepseek:deepseek-flash | run1 | exhausted | 5/5 | 18→18→20→20→20/28 爬升后死平台（B类第11例） | 2026-09-28 23:1x |
+| P7983 | deepseek:deepseek-flash | run1 | exhausted | 5/5 | 849646/101075 | 2026-09-28 23:13 |
 | P7979 | deepseek:deepseek-flash | run1 | gave_up | 4/5 | 0/4三连+第4次超时（B类第10例，全零型） | 2026-09-28 23:0x |
 | P7979 | deepseek:deepseek-flash | run1 | gave_up | 4/5 | 675390/151617 | 2026-09-28 23:04 |
 | P7952 | deepseek:deepseek-flash | run1 | gave_up | 3/5 | 14→17→17/22 爬升后平台（B类第9例） | 2026-09-28 22:5x |
