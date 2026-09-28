@@ -77,10 +77,11 @@ def _stream_create(client, model: str, messages: list, tools: list,
     返回与同步接口同形的对象（choices[0].message / usage）；
     message 为 SimpleNamespace（tool_calls 元素也是），供本模块消费。
     测试用的 Mock 客户端可能返回非流式对象，直接透传。"""
-    stream = client.chat.completions.create(
-        model=model, messages=messages, tools=tools,
-        temperature=0.7, stream=True, timeout=180,
-        **(extra or {}))
+    params = dict(model=model, messages=messages, tools=tools,
+                  temperature=0.7, stream=True, timeout=180,
+                  max_tokens=262144)  # 默认 256K（官方上限 384K；原默认 64K 会导致思考烧穿）
+    params.update(extra or {})     # extra 可覆盖（边界扫描用）
+    stream = client.chat.completions.create(**params)
     if not hasattr(stream, "__iter__"):  # Mock 透传
         return stream
 
