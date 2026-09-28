@@ -1,7 +1,6 @@
 """LLM 选手：function-calling 循环，模拟 OI 黑盒调试。"""
 import json
 
-from .judge import Judge
 from .session import Session
 
 MAX_SUBMITS = 10          # 最多提交轮数 K
@@ -61,7 +60,7 @@ def _truncate(messages):
 
 
 class AgentRunner:
-    def __init__(self, judge: Judge, client, model: str,
+    def __init__(self, judge, client, model: str,
                  phase: str = "A", starter_code: str | None = None):
         self.judge = judge
         self.client = client

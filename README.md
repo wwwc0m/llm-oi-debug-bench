@@ -18,22 +18,21 @@
 - 工具 3：**提交到真实 OJ 平台判题** → 黑盒反馈：每个测试点 通过/未通过，
   未通过标注 WA/TLE/MLE（测试点内容不可见），最多 K=10 轮
 
-## 判题架构
+## 判题架构（只走洛谷）
 
 ```
-problems/<id>/problem.json 的 source 字段决定判题后端：
-  {"platform": "luogu", "pid": "P1001"}       → 洛谷（主力）
-  {"platform": "codeforces", "url": "..."}    → Codeforces（备选）
-  无 source（本地题，tests/ 目录自带隐藏测试）  → 本地判题器（兜底/调试）
+problems/<id>/problem.json
+  {"source": {"platform": "luogu", "pid": "P1908"}}   → LuoguJudge
 ```
 
-- **洛谷为主力**：题面/样例/限制可拉取，每个测试点状态可见；
-  个人私有题目可上传——自编 reskin/novel 题进真实判题的唯一公开渠道。
-  凭据用浏览器 Cookie（`LUOGU_UID` / `LUOGU_CLIENT_ID`，见 .env.example）。
-- Codeforces 备选：onlinejudge 库提交 + 官方 API 读结果。
-- 本地判题器保留：协议调试、离线开发、以及暂不便上传平台的题目。
+- 题面 / 样例 / 时限从洛谷拉取并缓存（platform_cache.json、statement.txt），
+  保证实验可复现；
+- `compile` / `run_sample` 本地执行（gcc，即选手的本地调试能力），
+  `submit` 提交洛谷判题，回读逐测试点黑盒反馈；
+- 自编 reskin / novel 题上传洛谷**个人私有题目**，与 classic 同一判题通道；
+- 凭据：浏览器 Cookie（`LUOGU_UID` / `LUOGU_CLIENT_ID`，见 .env.example）。
 
-拉取平台题目：`python -m runner.cli fetch --platform luogu --pid P1001 --id lg1001`
+拉取洛谷题目：`python -m runner.cli fetch --pid P1908 --id inv-pairs`
 
 ## 实验结构
 
