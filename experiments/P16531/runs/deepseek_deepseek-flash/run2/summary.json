@@ -1,0 +1,15 @@
+{
+  "problem": "P16531",
+  "model": "deepseek:deepseek-flash",
+  "phase": "A",
+  "run": 2,
+  "final": {
+    "status": "no_submit",
+    "rounds_used": 0
+  },
+  "usage": {
+    "prompt_tokens": 3133187,
+    "completion_tokens": 235176
+  },
+  "submits": 0
+}

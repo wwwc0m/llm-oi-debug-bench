@@ -24,6 +24,9 @@
 | 题目 | 模型 | 轮次 | 结局 | 提交 | tokens(p/c) | 时间 |
 |------|------|------|------|------|-------------|------|
 <!-- AUTO:RUNS -->
+| P16531 | deepseek:deepseek-flash | run2 | no_submit(过度验证) | 0/5 | 60轮本地自测全过却从不提交，3.13M tokens 磨到步数上限 | 2026-09-28 21:5x |
+| P16531 | deepseek:deepseek-flash | run2 | no_submit | 0/5 | 3133187/235176 | 2026-09-28 20:49 |
+| P17387 | deepseek:deepseek-flash | run1 | fixed | 1/5 | 107016/67435 | 2026-09-28 20:44 |
 | P17382 | deepseek:deepseek-flash | run1 | fixed | 1/5 | 25375/26124 | 2026-09-28 20:42 |
 | P17304 | deepseek:deepseek-flash | run2 | fixed | 2/5 | 329882/125763 | 2026-09-28 20:35 |
 | P17344 | deepseek:deepseek-flash | run2 | fixed | 3/5 | 全站2人AC题3轮拿下：CE(bits缺失)→CE(iostream缺失)→AC 42/42；CE原文回传机制立功 | 2026-09-28 21:0x |

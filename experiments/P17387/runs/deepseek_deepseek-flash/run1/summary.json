@@ -1,5 +1,5 @@
 {
-  "problem": "P17382",
+  "problem": "P17387",
   "model": "deepseek:deepseek-flash",
   "phase": "A",
   "run": 1,
@@ -8,8 +8,8 @@
     "rounds_used": 1
   },
   "usage": {
-    "prompt_tokens": 25375,
-    "completion_tokens": 26124
+    "prompt_tokens": 107016,
+    "completion_tokens": 67435
   },
   "submits": 1
 }
