@@ -120,10 +120,17 @@ class AgentRunner:
 
         for step in range(60):  # 硬上限：防止死循环
             print(f"[agent] 第 {step + 1} 步：请求模型 {self.model} ...", flush=True)
-            resp = self.client.chat.completions.create(
-                model=self.model, messages=messages,
-                tools=_tools_schema(), temperature=0.7,
-            )
+            try:
+                resp = self.client.chat.completions.create(
+                    model=self.model, messages=messages,
+                    tools=_tools_schema(), temperature=0.7,
+                    timeout=420, max_retries=1,  # 推理模型可能慢，但 7 分钟必须返回
+                )
+            except Exception as e:
+                print(f"[agent] API 调用失败：{str(e)[:150]}", flush=True)
+                final = {"status": "error", "detail": str(e)[:200],
+                         "rounds_used": submits}
+                break
             msg = resp.choices[0].message
             u = resp.usage
             usage_total["prompt_tokens"] += getattr(u, "prompt_tokens", 0) or 0
