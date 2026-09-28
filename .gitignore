@@ -20,3 +20,6 @@ Thumbs.db
 
 # 实验产物
 results/
+
+# 持久化浏览器配置
+browser_profile/

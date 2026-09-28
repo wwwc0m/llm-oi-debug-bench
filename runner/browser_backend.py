@@ -21,10 +21,15 @@ _RECORD_RE = re.compile(r"/record/(\d+)")
 
 
 class LuoguBrowser:
+    # 持久化配置目录：浏览器 Cookie/历史跨实验保留，积累 Cloudflare 信任
+    # （每次换全新临时配置 = 同 IP 反复出现"全新浏览器"，反而更可疑）
+    PROFILE_DIR = os.path.join(os.getcwd(), "browser_profile")
+
     def __init__(self, headless: bool = False):
         self._pw = sync_playwright().start()
-        self.browser = self._pw.chromium.launch(channel="msedge", headless=headless)
-        self.ctx = self.browser.new_context(viewport={"width": 1280, "height": 900})
+        self.ctx = self._pw.chromium.launch_persistent_context(
+            self.PROFILE_DIR, channel="msedge", headless=headless,
+            viewport={"width": 1280, "height": 900})
         uid, cid = os.environ.get("LUOGU_UID", ""), os.environ.get("LUOGU_CLIENT_ID", "")
         if uid and cid:
             self.ctx.add_cookies([
@@ -36,7 +41,7 @@ class LuoguBrowser:
                                        origin="https://www.luogu.com.cn")
         except Exception:
             pass
-        self.page = self.ctx.new_page()
+        self.page = self.ctx.pages[0] if self.ctx.pages else self.ctx.new_page()
 
     # ---------- 提交 ----------
 
@@ -44,6 +49,7 @@ class LuoguBrowser:
         """对话式提交（实测流程）：题目页点"提交答案"→ CM6 编辑器剪贴板填充 →
         自动点"提交评测"→ 若出人机验证等人工完成 → 捕获 /record/{rid} 跳转。"""
         page = self.page
+        print(f"[浏览器] 打开题目页 {ref['pid']} ...", flush=True)
         page.goto(f"{BASE}/problem/{ref['pid']}", wait_until="domcontentloaded",
                   timeout=30000)
         page.wait_for_timeout(3000)
@@ -52,9 +58,11 @@ class LuoguBrowser:
         except Exception:
             pass
         # 打开提交对话框（工具栏菜单里的"提交答案"入口）
+        print("[浏览器] 点击 提交答案 ...", flush=True)
         page.get_by_text("提交答案", exact=True).first.click(timeout=10000)
         page.wait_for_timeout(2500)
         # 填充代码：剪贴板 + Ctrl+A / Ctrl+V（CodeMirror 6）
+        print("[浏览器] 写入剪贴板并填充编辑器 ...", flush=True)
         page.evaluate("c => navigator.clipboard.writeText(c)", code)
         page.locator(".cm-content").first.click(timeout=10000)
         page.keyboard.press("Control+a")
@@ -62,21 +70,29 @@ class LuoguBrowser:
         page.wait_for_timeout(1000)
         n = page.evaluate(
             "() => (document.querySelector('.cm-content')||{textContent:''}).textContent.length")
-        print(f"[浏览器] 代码已填入编辑器（{n} 字符），语言默认 C++14 (GCC 9)；"
-              f"正在点击提交，如弹出人机验证请手动完成…", flush=True)
+        print(f"[浏览器] 代码已填入编辑器（{n} 字符），点击 提交评测 ...", flush=True)
         page.get_by_text("提交评测", exact=True).first.click(timeout=10000)
 
         deadline = time.time() + human_wait_s
         warned = False
+        auto_tried = 0
         while time.time() < deadline:
             page.wait_for_timeout(2000)
             m = _RECORD_RE.search(page.url)
             if m:
                 return m.group(1)
+            # 尝试自动完成 Turnstile：只在真实浏览器里点击复选框本身，
+            # 不做任何指纹伪装/打码服务；由 Cloudflare 自行判定，点不过即回退人工
+            if auto_tried < 2 and self._turnstile_present():
+                auto_tried += 1
+                ok = self._try_turnstile_click()
+                print(f"[浏览器] 自动点击人机验证（第 {auto_tried} 次）："
+                      f"{'已点击，等待判定' if ok else '未能定位复选框'}", flush=True)
+                continue
             if not warned:
                 body = page.inner_text("body")[:3000]
                 if "验证" in body or "人机" in body:
-                    print("\a" * 3 + "[浏览器] 需要人机验证：请在浏览器窗口完成，提交会自动继续…",
+                    print("\a" * 3 + "[浏览器] 自动验证未通过：请在浏览器窗口人工完成，提交会自动继续…",
                           flush=True)
                     try:
                         page.bring_to_front()
@@ -84,6 +100,40 @@ class LuoguBrowser:
                         pass
                     warned = True
         raise TimeoutError(f"等待提交跳转超时（{human_wait_s}s）；当前 URL: {page.url}")
+
+    def _turnstile_present(self) -> bool:
+        try:
+            n = self.page.locator(
+                'iframe[src*="challenges.cloudflare.com"], iframe[src*="turnstile"], '
+                'iframe[title*="Cloudflare"], iframe[title*="Widget"], '
+                'iframe[title*="验证"]').count()
+            if n == 0:  # 没匹配到时把全部 iframe 属性打出来辅助定位
+                info = self.page.evaluate(
+                    "() => [...document.querySelectorAll('iframe')]"
+                    ".map(f => f.src.slice(0, 80) + ' | ' + (f.title || '').slice(0, 30))"
+                    ".slice(0, 8)")
+                if info:
+                    print(f"[浏览器] 当前 iframe 列表: {info}", flush=True)
+            return n > 0
+        except Exception:
+            return False
+
+    def _try_turnstile_click(self) -> bool:
+        page = self.page
+        for sel in ('iframe[src*="challenges.cloudflare.com"]',
+                    'iframe[title*="Cloudflare"]', 'iframe[title*="Widget"]'):
+            try:
+                fl = page.frame_locator(sel)
+                for target in ('input[type=checkbox]', 'label', 'body'):
+                    try:
+                        fl.locator(target).first.click(timeout=2500)
+                        page.wait_for_timeout(2500)
+                        return True
+                    except Exception:
+                        continue
+            except Exception:
+                continue
+        return False
 
     # ---------- 结果 ----------
 
@@ -120,6 +170,6 @@ class LuoguBrowser:
 
     def close(self):
         try:
-            self.browser.close()
+            self.ctx.close()
         finally:
             self._pw.stop()
