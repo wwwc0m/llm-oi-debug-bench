@@ -23,6 +23,8 @@
 | 题目 | 模型 | 轮次 | 结局 | 提交 | tokens(p/c) | 时间 |
 |------|------|------|------|------|-------------|------|
 <!-- AUTO:RUNS -->
+| P16926 | deepseek:deepseek-flash | run3 | gave_up | 4/5 | 最终32/80未AC；全程轨迹：20分→TLE22/80→32/80→32/80平台期→放弃 | 2026-09-28 19:40 |
+| P16926 | deepseek:deepseek-flash | run3 | gave_up | 1/5 | 330038/136395 | 2026-09-28 19:33 |
 | P16926 | deepseek:deepseek-flash | run2 | error | 2/5 | 640401/193124 | 2026-09-28 19:20 |
 | P17465 | deepseek:deepseek-flash | run2 | error | 0/5 | 1394/90060 | 2026-09-28 19:20 |
 | P15840 | deepseek:deepseek-flash | run2 | fixed | 2/5 | 129235/77249 | 2026-09-28 19:19 |
