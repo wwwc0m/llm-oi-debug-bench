@@ -69,6 +69,65 @@ def _truncate(messages):
     return messages[:2] + tail[cut:]
 
 
+def _stream_create(client, model: str, messages: list, tools: list):
+    """流式请求：推理模型思考期间 token 持续流动，连接不会空闲超时。
+
+    返回与同步接口同形的对象（choices[0].message / usage）；
+    message 为 SimpleNamespace（tool_calls 元素也是），供本模块消费。
+    测试用的 Mock 客户端可能返回非流式对象，直接透传。"""
+    stream = client.chat.completions.create(
+        model=model, messages=messages, tools=tools,
+        temperature=0.7, stream=True, timeout=180)
+    if not hasattr(stream, "__iter__"):  # Mock 透传
+        return stream
+
+    content_parts, calls, usage, finish = [], {}, None, None
+    for chunk in stream:
+        if getattr(chunk, "usage", None):
+            usage = chunk.usage
+        if not getattr(chunk, "choices", None):
+            continue
+        c = chunk.choices[0]
+        if c.finish_reason:
+            finish = c.finish_reason
+        d = c.delta
+        if d is None:
+            continue
+        if d.content:
+            content_parts.append(d.content)
+        for tc in (d.tool_calls or []):
+            slot = calls.setdefault(tc.index or 0,
+                                    {"id": "", "name": "", "args": ""})
+            if tc.id:
+                slot["id"] = tc.id
+            fn = getattr(tc, "function", None)
+            if fn is not None:
+                if fn.name:
+                    slot["name"] = fn.name
+                if fn.arguments:
+                    slot["args"] += fn.arguments
+
+    from types import SimpleNamespace as NS
+    tcs = [NS(id=v["id"], type="function",
+              function=NS(name=v["name"], arguments=v["args"]))
+           for _, v in sorted(calls.items())]
+    msg = NS(tool_calls=tcs or None, content="".join(content_parts) or None)
+    u = NS(prompt_tokens=getattr(usage, "prompt_tokens", 0) or 0,
+           completion_tokens=getattr(usage, "completion_tokens", 0) or 0)
+    return NS(choices=[NS(message=msg, finish_reason=finish)], usage=u)
+
+
+def _msg_to_dict(msg) -> dict:
+    """把流式组装的助手消息转为可直接回传 API 的 dict。"""
+    if msg.tool_calls:
+        return {"role": "assistant", "content": msg.content,
+                "tool_calls": [{"id": t.id, "type": "function",
+                                "function": {"name": t.function.name,
+                                             "arguments": t.function.arguments}}
+                               for t in msg.tool_calls]}
+    return {"role": "assistant", "content": msg.content}
+
+
 class AgentRunner:
     def __init__(self, judge, client, model: str,
                  phase: str = "A", starter_code: str | None = None,
@@ -121,11 +180,8 @@ class AgentRunner:
         for step in range(60):  # 硬上限：防止死循环
             print(f"[agent] 第 {step + 1} 步：请求模型 {self.model} ...", flush=True)
             try:
-                resp = self.client.chat.completions.create(
-                    model=self.model, messages=messages,
-                    tools=_tools_schema(), temperature=0.7,
-                    timeout=420,  # 推理模型可能慢，但 7 分钟必须返回
-                )
+                resp = _stream_create(self.client, self.model,
+                                      messages, _tools_schema())
             except Exception as e:
                 print(f"[agent] API 调用失败：{str(e)[:150]}", flush=True)
                 final = {"status": "error", "detail": str(e)[:200],
@@ -137,7 +193,7 @@ class AgentRunner:
             usage_total["completion_tokens"] += getattr(u, "completion_tokens", 0) or 0
 
             if msg.tool_calls:
-                messages.append(msg)
+                messages.append(_msg_to_dict(msg))
                 for tc in msg.tool_calls:
                     code = json.loads(tc.function.arguments).get("code", "")
                     name = tc.function.name
@@ -179,7 +235,7 @@ class AgentRunner:
             else:
                 # 模型不再调用工具：追问一次；若仍不调用则结束
                 if final["status"] == "no_submit" and submits == 0:
-                    messages.append(msg)
+                    messages.append(_msg_to_dict(msg))
                     messages.append({"role": "user",
                                      "content": "请通过 submit 工具提交你的代码。"})
                     continue
