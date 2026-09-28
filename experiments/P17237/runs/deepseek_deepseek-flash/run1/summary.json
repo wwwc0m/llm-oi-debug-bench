@@ -1,0 +1,16 @@
+{
+  "problem": "P17237",
+  "model": "deepseek:deepseek-flash",
+  "phase": "A",
+  "run": 1,
+  "final": {
+    "status": "error",
+    "detail": "Error code: 400 - {'error': {'message': 'Invalid assistant message: content or tool_calls must be set (request_id: 1bf0338f-d094-42f1-86c6-74b208a588fd)', 'type': 'invalid_request_error', 'param': Non",
+    "rounds_used": 0
+  },
+  "usage": {
+    "prompt_tokens": 1206,
+    "completion_tokens": 65536
+  },
+  "submits": 0
+}

@@ -270,6 +270,20 @@ class AgentRunner:
                     final = {"status": "exhausted", "rounds_used": submits}
                     break
             else:
+                # 空响应（思考烧穿时既无内容也无工具调用）：
+                # 空 assistant 消息不可回传（API 400），改为催促重答
+                if not (msg.content or "").strip():
+                    print("[agent] 本步响应为空（疑似思考超限），催促重答 ...", flush=True)
+                    self._empty_nudges = getattr(self, "_empty_nudges", 0) + 1
+                    if self._empty_nudges >= 3:
+                        final = {"status": "error",
+                                 "detail": "连续空响应（思考超限）",
+                                 "rounds_used": submits}
+                        break
+                    messages.append({"role": "user",
+                                     "content": "你上一次响应为空（思考可能超出输出上限）。"
+                                                "请精简思考，直接调用 submit 工具提交完整代码。"})
+                    continue
                 # 模型不再调用工具：追问一次；若仍不调用则结束
                 if final["status"] == "no_submit" and submits == 0:
                     messages.append(_msg_to_dict(msg))
