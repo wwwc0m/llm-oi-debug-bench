@@ -92,7 +92,7 @@ class LuoguBrowser:
             if not warned:
                 body = page.inner_text("body")[:3000]
                 if "验证" in body or "人机" in body:
-                    print("\a" * 3 + "[浏览器] 自动验证未通过：请在浏览器窗口人工完成，提交会自动继续…",
+                    print("[浏览器] 自动验证未通过：请在浏览器窗口人工完成，提交会自动继续…",
                           flush=True)
                     try:
                         page.bring_to_front()
