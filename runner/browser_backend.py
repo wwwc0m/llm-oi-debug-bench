@@ -169,6 +169,13 @@ class LuoguBrowser:
             total = len(pts)
             detail = (f"{status or 'UNKNOWN'}（通过测试点 {passed}/{total}）"
                       if total else (status or "UNKNOWN"))
+            if status == "CE":  # 回传编译器报错原文（本地能过平台CE时的关键线索）
+                i = text.find("编译失败")
+                if i < 0:
+                    i = text.find("Compile Error")
+                if i >= 0:
+                    detail = "CE 编译器输出：" + text[i:i + 700].replace("
+", " | ")
             return {"verdict": status or "UNKNOWN", "passed": passed or None,
                     "total": total or None, "detail": detail,
                     "points": [{"case": n, "verdict": s, "res": r}
