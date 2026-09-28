@@ -47,6 +47,10 @@ class LuoguBrowser:
         page.goto(f"{BASE}/problem/{ref['pid']}", wait_until="domcontentloaded",
                   timeout=30000)
         page.wait_for_timeout(3000)
+        try:
+            page.bring_to_front()  # 弹到前台，方便人工过验证
+        except Exception:
+            pass
         # 打开提交对话框（工具栏菜单里的"提交答案"入口）
         page.get_by_text("提交答案", exact=True).first.click(timeout=10000)
         page.wait_for_timeout(2500)
@@ -72,8 +76,12 @@ class LuoguBrowser:
             if not warned:
                 body = page.inner_text("body")[:3000]
                 if "验证" in body or "人机" in body:
-                    print("[浏览器] 需要人机验证：请在浏览器窗口完成，提交会自动继续…",
+                    print("\a" * 3 + "[浏览器] 需要人机验证：请在浏览器窗口完成，提交会自动继续…",
                           flush=True)
+                    try:
+                        page.bring_to_front()
+                    except Exception:
+                        pass
                     warned = True
         raise TimeoutError(f"等待提交跳转超时（{human_wait_s}s）；当前 URL: {page.url}")
 
