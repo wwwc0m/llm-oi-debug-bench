@@ -174,8 +174,8 @@ class LuoguBrowser:
                 if i < 0:
                     i = text.find("Compile Error")
                 if i >= 0:
-                    detail = "CE 编译器输出：" + text[i:i + 700].replace("
-", " | ")
+                    detail = ("CE 编译器输出："
+                              + text[i:i + 700].replace("\n", " | "))
             return {"verdict": status or "UNKNOWN", "passed": passed or None,
                     "total": total or None, "detail": detail,
                     "points": [{"case": n, "verdict": s, "res": r}
