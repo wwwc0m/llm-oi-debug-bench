@@ -108,40 +108,6 @@ class LuoguBrowser:
         except Exception:
             return False
 
-    def _turnstile_present(self) -> bool:
-        try:
-            n = self.page.locator(
-                'iframe[src*="challenges.cloudflare.com"], iframe[src*="turnstile"], '
-                'iframe[title*="Cloudflare"], iframe[title*="Widget"], '
-                'iframe[title*="验证"]').count()
-            if n == 0:  # 没匹配到时把全部 iframe 属性打出来辅助定位
-                info = self.page.evaluate(
-                    "() => [...document.querySelectorAll('iframe')]"
-                    ".map(f => f.src.slice(0, 80) + ' | ' + (f.title || '').slice(0, 30))"
-                    ".slice(0, 8)")
-                if info:
-                    print(f"[浏览器] 当前 iframe 列表: {info}", flush=True)
-            return n > 0
-        except Exception:
-            return False
-
-    def _try_turnstile_click(self) -> bool:
-        page = self.page
-        for sel in ('iframe[src*="challenges.cloudflare.com"]',
-                    'iframe[title*="Cloudflare"]', 'iframe[title*="Widget"]'):
-            try:
-                fl = page.frame_locator(sel)
-                for target in ('input[type=checkbox]', 'label', 'body'):
-                    try:
-                        fl.locator(target).first.click(timeout=2500)
-                        page.wait_for_timeout(2500)
-                        return True
-                    except Exception:
-                        continue
-            except Exception:
-                continue
-        return False
-
     # ---------- 结果 ----------
 
     def wait_result(self, rid: str, ref: dict, timeout_s: int = 300) -> dict:
