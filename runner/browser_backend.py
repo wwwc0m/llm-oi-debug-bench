@@ -84,18 +84,13 @@ class LuoguBrowser:
             m = _RECORD_RE.search(page.url)
             if m:
                 return m.group(1)
-            # 尝试自动完成 Turnstile：只在真实浏览器里点击复选框本身，
-            # 不做任何指纹伪装/打码服务；由 Cloudflare 自行判定，点不过即回退人工
-            if auto_tried < 2 and self._turnstile_present():
-                auto_tried += 1
-                ok = self._try_turnstile_click()
-                print(f"[浏览器] 自动点击人机验证（第 {auto_tried} 次）："
-                      f"{'已点击，等待判定' if ok else '未能定位复选框'}", flush=True)
-                continue
             if not warned:
+                # 洛谷图片点选验证码文案为"请点击…"开头；Turnstile 为 iframe
                 body = page.inner_text("body")[:3000]
-                if "验证" in body or "人机" in body:
-                    print("[浏览器] 自动验证未通过：请在浏览器窗口人工完成，提交会自动继续…",
+                has_captcha_text = any(kw in body for kw in
+                                       ("验证", "人机", "请点击", "Click"))
+                if has_captcha_text or self._srcless_iframe():
+                    print("[浏览器] 检测到人机验证：请在浏览器窗口人工完成，提交会自动继续…",
                           flush=True)
                     try:
                         page.bring_to_front()
@@ -103,6 +98,15 @@ class LuoguBrowser:
                         pass
                     warned = True
         raise TimeoutError(f"等待提交跳转超时（{human_wait_s}s）；当前 URL: {page.url}")
+
+    def _srcless_iframe(self) -> bool:
+        """洛谷图片点选验证码渲染在无 src 的内嵌 iframe 中（约 300x200 可见块）。"""
+        try:
+            return self.page.evaluate(
+                "() => [...document.querySelectorAll('iframe')]"
+                ".some(f => !f.src && f.offsetWidth > 50 && f.offsetHeight > 50)")
+        except Exception:
+            return False
 
     def _turnstile_present(self) -> bool:
         try:
