@@ -12,10 +12,8 @@ PROVIDERS = {
     "deepseek": ("https://api.deepseek.com", "DEEPSEEK_API_KEY", "deepseek-v4-pro"),
 }
 
-# 实验默认被试（BENCH_MODELS 可覆盖）
+# 实验默认被试（BENCH_MODELS 可覆盖）；GLM 系因思考不可控暂停参与，注册保留
 DEFAULT_MODELS = [
-    "zhipu:glm-5.3",
-    "zhipu:glm-5.3-flash",
     "deepseek:deepseek-v4-pro",
     "deepseek:deepseek-flash",
 ]
