@@ -23,6 +23,7 @@
 | 题目 | 模型 | 轮次 | 结局 | 提交 | tokens(p/c) | 时间 |
 |------|------|------|------|------|-------------|------|
 <!-- AUTO:RUNS -->
+| P16792 | deepseek:deepseek-flash | run1 | fixed | 1/5 | 371803/46209 | 2026-09-28 19:02 |
 | P17465 | deepseek:deepseek-flash | run1 | fixed | 1/5 | 519431/139753 | 2026-09-28 18:55 |
 | P15860 | deepseek:deepseek-flash | run1 | error | 0/5 | 3468/196609 | 2026-09-28 18:36 |
 | P16629 | deepseek:deepseek-flash | run1 | fixed | 1/5 | 92256/53325 | 2026-09-28 18:25 |
