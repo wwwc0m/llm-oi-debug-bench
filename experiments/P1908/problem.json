@@ -1,7 +1,7 @@
 {
-  "id": "classic-inv-pairs",
+  "id": "P1908",
   "category": "classic",
-  "title": "洛谷 P1908",
+  "title": "洛谷 P1908 逆序对",
   "statement": "",
   "time_limit_ms": 1000,
   "memory_limit_mb": 1024,
@@ -15,5 +15,6 @@
     "platform": "luogu",
     "pid": "P1908",
     "lang": "28"
-  }
+  },
+  "note": "题面缓存于 statement.md（fetch 拉取）。assets/solution.cpp 为参考解（已在洛谷实测 AC 100 分，R299698110）；assets/mutants/ 为阶段 B 注错变体。"
 }

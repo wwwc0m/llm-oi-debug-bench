@@ -1,8 +1,5 @@
-"""洛谷判题：本地 gcc 编译/样例自测 + 洛谷提交/黑盒反馈回读。
+"""洛谷判题：题面/样例用 requests 匿名拉取；提交与结果用真实浏览器。"""
 
-与 agent 的工具协议（compile / run_sample / submit）对接；
-题面与样例首次使用时从洛谷拉取并缓存到题目目录。
-"""
 import hashlib
 import json
 import os
@@ -11,6 +8,7 @@ import tempfile
 import time
 
 from . import sandbox
+from .browser_backend import LuoguBrowser
 from .platforms.luogu import LuoguBackend
 
 # 本地自测用宽松限制（正式时限以洛谷判题为准）
@@ -23,8 +21,9 @@ class LuoguJudge:
         self.p = problem
         if not problem.source or problem.source.get("platform") != "luogu":
             raise ValueError("题目缺少 source 字段：{platform: luogu, pid: ...}")
-        self.backend = LuoguBackend()
-        self.lang = problem.source.get("lang", "")
+        self.fetcher = LuoguBackend()
+        self.browser = LuoguBrowser()
+        self.lang = problem.source.get("lang", "28")
         self._workdir = tempfile.mkdtemp(prefix="bench_lg_")
         self._exe_key = None
         self._exe = (None, None)
@@ -35,7 +34,7 @@ class LuoguJudge:
     def _ensure_samples(self):
         if self.p.samples:
             return
-        fetched = self.backend.fetch_problem(self.p.source)
+        fetched = self.fetcher.fetch_problem(self.p.source)
         cache_path = os.path.join(self.p.dir, "platform_cache.json")
         with open(cache_path, "w", encoding="utf-8") as f:
             json.dump(fetched, f, ensure_ascii=False, indent=1)
@@ -84,10 +83,10 @@ class LuoguJudge:
     def submit(self, code: str) -> dict:
         t0 = time.time()
         try:
-            rid = self.backend.submit(code, self.lang, self.p.source)
+            rid = self.browser.submit(code, self.lang, self.p.source)
         except Exception as e:  # 网络/风控问题不应崩实验
             return {"ok": False, "errors": f"洛谷提交失败：{e}"}
-        result = self.backend.wait_result(rid, self.p.source)
+        result = self.browser.wait_result(rid, self.p.source)
         passed, total = result.get("passed"), result.get("total")
         return {
             "ok": True,
@@ -100,3 +99,7 @@ class LuoguJudge:
 
     def cleanup(self):
         shutil.rmtree(self._workdir, ignore_errors=True)
+        try:
+            self.browser.close()
+        except Exception:
+            pass

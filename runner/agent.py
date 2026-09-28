@@ -1,9 +1,10 @@
 """LLM 选手：function-calling 循环，模拟 OI 黑盒调试。"""
 import json
+import os
 
 from .session import Session
 
-MAX_SUBMITS = 10          # 最多提交轮数 K
+MAX_SUBMITS = 5           # 最多提交轮数 K（实验协议）
 KEEP_LAST_MSGS = 24       # 历史过长时截断，只保留最近若干条消息
 
 SYSTEM_PROMPT = """你是一名参加 OI（信息学奥赛）式比赛的选手。规则：
@@ -61,12 +62,26 @@ def _truncate(messages):
 
 class AgentRunner:
     def __init__(self, judge, client, model: str,
-                 phase: str = "A", starter_code: str | None = None):
+                 phase: str = "A", starter_code: str | None = None,
+                 out_dir: str | None = None):
         self.judge = judge
         self.client = client
         self.model = model
         self.phase = phase
         self.starter_code = starter_code
+        self.out_dir = out_dir  # 每轮 round<N>.cpp / round<N>.result.json 落盘目录
+
+    def _save_round(self, n: int, code: str, result: dict):
+        if not self.out_dir:
+            return
+        os.makedirs(self.out_dir, exist_ok=True)
+        with open(os.path.join(self.out_dir, f"round{n}.cpp"), "w",
+                  encoding="utf-8", newline="\n") as f:
+            f.write(code)
+        slim = {k: v for k, v in result.items() if k != "results"}
+        with open(os.path.join(self.out_dir, f"round{n}.result.json"), "w",
+                  encoding="utf-8", newline="\n") as f:
+            json.dump(slim, f, ensure_ascii=False, indent=2)
 
     def run(self, session: Session):
         p = self.judge.p
@@ -122,6 +137,7 @@ class AgentRunner:
                                     if k in result}
                             view["detail"] = result.get("detail") or _fmt_submit(result)
                             result = view
+                        self._save_round(submits, code, result)
                     else:
                         result = {"ok": False, "errors": f"未知工具 {name}"}
                     session.log_round(step, name, code, result, None)

@@ -15,9 +15,10 @@ class Problem:
         self.time_limit_ms = meta.get("time_limit_ms")
         self.memory_limit_mb = meta.get("memory_limit_mb")
         self.samples = meta.get("samples") or []
-        # {"platform": "luogu", "pid": "P1908", "lang": "28"}
         self.source = meta.get("source")
-        sol = os.path.join(self.dir, "solution.cpp")
+        sol = os.path.join(self.dir, "assets", "solution.cpp")
+        if not os.path.exists(sol):
+            sol = os.path.join(self.dir, "solution.cpp")
         if os.path.exists(sol):
             with open(sol, encoding="utf-8") as f:
                 self.reference_solution = f.read()
