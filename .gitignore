@@ -24,3 +24,10 @@ results/
 # 持久化浏览器配置
 browser_profile/
 browser_profile*/
+
+# 论文相关（不入仓库）
+tools/write_thesis.py
+tools/make_figures.py
+docs/THESIS_FORMAT.md
+docs/figures/
+../AI在*.docx
